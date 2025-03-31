@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list/config/api_service.dart';
-import 'package:todo_list/logic/all_logic.dart';
 import 'package:todo_list/json/task_bean.dart';
+import 'package:todo_list/logic/all_logic.dart';
 
 import 'global_model.dart';
 
 class MainPageModel extends ChangeNotifier {
-  MainPageLogic logic;
-  BuildContext context;
+  late MainPageLogic logic;
+  late BuildContext context;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   List<TaskBean> tasks = [];
 
@@ -49,15 +49,14 @@ class MainPageModel extends ChangeNotifier {
 
   CancelToken cancelToken = CancelToken();
 
-
   ///用于在mainPage销毁后将GlobalModel中的mainPageModel销毁
-  GlobalModel _globalModel;
+  late GlobalModel _globalModel;
 
   MainPageModel() {
     logic = MainPageLogic(this);
   }
 
-  void setContext(BuildContext context, {GlobalModel globalModel}) {
+  void setContext(BuildContext context, {required GlobalModel globalModel}) {
     if (this.context == null) {
       this.context = context;
       logic.checkUpdate(globalModel);
@@ -82,8 +81,8 @@ class MainPageModel extends ChangeNotifier {
   void dispose() {
     super.dispose();
     scaffoldKey?.currentState?.dispose();
-    if(!cancelToken.isCancelled) cancelToken.cancel();
-    _globalModel.mainPageModel = null;
+    if (!cancelToken.isCancelled) cancelToken.cancel();
+    _globalModel.mainPageModel = MainPageModel();
     debugPrint("MainPageModel销毁了");
   }
 

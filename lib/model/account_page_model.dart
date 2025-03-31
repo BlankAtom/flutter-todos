@@ -3,14 +3,14 @@ import 'package:todo_list/config/all_types.dart';
 import 'package:todo_list/logic/all_logic.dart';
 
 class AccountPageModel extends ChangeNotifier {
-  AccountPageLogic logic;
-  BuildContext context;
+  late AccountPageLogic logic;
+  late BuildContext context;
 
-  String avatarUrl;
-  String userName;
-  String emailAccount;
-  String backgroundType = AccountBGType.defaultType;
-  String backgroundUrl;
+  late String avatarUrl;
+  late String userName;
+  late String emailAccount;
+  late String backgroundType = AccountBGType.defaultType;
+  late String backgroundUrl;
 
   bool isExisting = false;
 

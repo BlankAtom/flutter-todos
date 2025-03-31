@@ -1,13 +1,9 @@
-
-
-class LoginBean{
-
-
-  String description;
-  int status;
-  String token;
-  String username;
-  String avatarUrl;
+class LoginBean {
+  late String description;
+  late int status;
+  late String token;
+  late String username;
+  late String avatarUrl;
 
   static LoginBean fromMap(Map<String, dynamic> map) {
     LoginBean loginBean = new LoginBean();
@@ -20,11 +16,10 @@ class LoginBean{
   }
 
   static List<LoginBean> fromMapList(dynamic mapList) {
-    List<LoginBean> list = List.filled(mapList.length, null);
+    List<LoginBean> list = List.filled(mapList.length, LoginBean());
     for (int i = 0; i < mapList.length; i++) {
       list[i] = fromMap(mapList[i]);
     }
     return list;
   }
-
 }

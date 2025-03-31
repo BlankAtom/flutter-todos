@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:todo_list/config/api_service.dart';
 import 'package:todo_list/logic/all_logic.dart';
 
-class LoginPageModel extends ChangeNotifier{
-
-  LoginPageLogic logic;
-  BuildContext context;
-
+class LoginPageModel extends ChangeNotifier {
+  late LoginPageLogic logic;
+  late BuildContext context;
 
   String currentAnimation = "move";
   bool showLoginWidget = true;
@@ -19,25 +17,25 @@ class LoginPageModel extends ChangeNotifier{
   bool isLoginNow = false;
 
   ///表示登录页面是不是第一个页面
-  bool isFirst;
+  bool isFirst = false;
 
   final formKey = GlobalKey<FormState>();
 
   CancelToken cancelToken = CancelToken();
 
-  LoginPageModel({bool isFirst = false}){
+  LoginPageModel({bool isFirst = false}) {
     logic = LoginPageLogic(this);
     this.isFirst = isFirst;
   }
 
-  void setContext(BuildContext context){
-    if(this.context == null){
-        this.context = context;
+  void setContext(BuildContext context) {
+    if (this.context == null) {
+      this.context = context;
     }
   }
 
   @override
-  void dispose(){
+  void dispose() {
     emailController.dispose();
     passwordController.dispose();
     cancelToken?.cancel();
@@ -45,7 +43,7 @@ class LoginPageModel extends ChangeNotifier{
     debugPrint("LoginPageModel销毁了");
   }
 
-  void refresh(){
+  void refresh() {
     notifyListeners();
   }
 }

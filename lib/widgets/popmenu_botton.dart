@@ -1,23 +1,23 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_list/config/all_types.dart';
+import 'package:todo_list/config/provider_config.dart';
+import 'package:todo_list/database/database.dart';
+import 'package:todo_list/i10n/localization_intl.dart';
 import 'package:todo_list/json/color_bean.dart';
 import 'package:todo_list/json/task_bean.dart';
-import 'package:todo_list/config/all_types.dart';
-import 'package:todo_list/database/database.dart';
 import 'package:todo_list/model/global_model.dart';
-import 'package:todo_list/config/provider_config.dart';
-import 'package:todo_list/i10n/localization_intl.dart';
 import 'package:todo_list/widgets/text_color_picker.dart';
 
 class PopMenuBt extends StatelessWidget {
-  final Color iconColor;
-  final VoidCallback onDelete;
-  final VoidCallback onEdit;
-  final TaskBean taskBean;
+  final Color? iconColor;
+  final VoidCallback? onDelete;
+  final VoidCallback? onEdit;
+  final TaskBean? taskBean;
 
   const PopMenuBt({
-    Key key,
+    required Key key,
     this.iconColor,
     this.onDelete,
     this.onEdit,
@@ -32,10 +32,10 @@ class PopMenuBt extends StatelessWidget {
       onSelected: (a) {
         switch (a) {
           case "edit":
-            if (onEdit != null) onEdit();
+            if (onEdit != null) onEdit!();
             break;
           case "delete":
-            if (onDelete != null) onDelete();
+            if (onDelete != null) onDelete!();
             break;
           case "background":
             Navigator.of(context).push(new CupertinoPageRoute(builder: (ctx) {
@@ -46,16 +46,17 @@ class PopMenuBt extends StatelessWidget {
             }));
             break;
           case "clearBackground":
-            taskBean.backgroundUrl = null;
+            taskBean?.backgroundUrl = null;
             refreshTaskCard(globalModel);
             break;
           case "textColor":
-            _showColorPicker(context,globalModel,ColorBean.fromBean(taskBean.taskIconBean.colorBean));
+            _showColorPicker(context, globalModel,
+                ColorBean.fromBean(taskBean!.taskIconBean!.colorBean!));
             break;
         }
       },
       itemBuilder: (ctx) {
-        return [
+        final items = List<PopupMenuEntry>.from([
           PopupMenuItem(
             value: "edit",
             child: ListTile(
@@ -79,7 +80,7 @@ class PopMenuBt extends StatelessWidget {
               leading: Icon(Icons.image, color: iconColor),
             ),
           ),
-          taskBean.backgroundUrl == null
+          taskBean?.backgroundUrl == null
               ? null
               : PopupMenuItem(
                   value: "clearBackground",
@@ -95,7 +96,9 @@ class PopMenuBt extends StatelessWidget {
               leading: Icon(Icons.format_color_text, color: iconColor),
             ),
           ),
-        ];
+        ]);
+
+        return items;
       },
       icon: Icon(
         Icons.more_vert,
@@ -105,23 +108,24 @@ class PopMenuBt extends StatelessWidget {
   }
 
   void refreshTaskCard(GlobalModel globalModel) {
-     DBProvider.db.updateTask(taskBean);
+    DBProvider.db.updateTask(taskBean);
     final searchModel = globalModel.searchPageModel;
     final taskDetailPageModel = globalModel.taskDetailPageModel;
     taskDetailPageModel?.refresh();
     final mainPageModel = globalModel.mainPageModel;
-     if(searchModel != null){
-       searchModel.refresh();
-       mainPageModel?.logic?.getTasks()?.then((v){
-         mainPageModel?.refresh();
-         return;
-       });
-     } else {
-       mainPageModel?.refresh();
-     }
+    if (searchModel != null) {
+      searchModel.refresh();
+      mainPageModel.logic.getTasks().then((v) {
+        mainPageModel.refresh();
+        return;
+      });
+    } else {
+      mainPageModel?.refresh();
+    }
   }
 
-  void _showColorPicker(BuildContext context, GlobalModel globalModel, Color initialColor) {
+  void _showColorPicker(
+      BuildContext context, GlobalModel globalModel, Color initialColor) {
     showDialog(
         context: context,
         builder: (ctx) {
@@ -129,9 +133,10 @@ class PopMenuBt extends StatelessWidget {
             initialColor: initialColor,
             onColorChanged: (Color color) {
               final colorBean = ColorBean.fromColor(color);
-              taskBean.textColor = colorBean;
+              taskBean?.textColor = colorBean;
               refreshTaskCard(globalModel);
             },
+            key: GlobalKey(),
           );
         });
   }

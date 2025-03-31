@@ -4,8 +4,8 @@ import 'package:todo_list/logic/all_logic.dart';
 
 class RegisterPageModel extends ChangeNotifier{
 
-  RegisterPageLogic logic;
-  BuildContext context;
+  late RegisterPageLogic logic;
+  late BuildContext context;
 
   String userName = "";
   String email = "";

@@ -4,22 +4,23 @@ import 'package:flutter/material.dart';
 
 class TaskDetailItem extends StatefulWidget {
   final double itemProgress;
-  final Function onChecked;
-  final TheProgress onProgressChanged;
+  final Function? onChecked;
+  final TheProgress? onProgressChanged;
   final String itemName;
   final int index;
   final Color iconColor;
-  final Color textColor;
+  final Color? textColor;
   final bool showAnimation;
 
   TaskDetailItem({
     this.itemProgress = 0.0,
     this.onChecked,
-    @required this.itemName,
+    required this.itemName,
     this.index = 0,
     this.onProgressChanged,
-    @required this.iconColor,
-    this.showAnimation = true, this.textColor,
+    required this.iconColor,
+    this.showAnimation = true,
+    this.textColor,
   });
 
   @override
@@ -31,12 +32,12 @@ class _TaskDetailItemState extends State<TaskDetailItem>
   double currentProgress = 0.0;
   bool progressShow = false;
 
-  AnimationController _controller;
-  Animation _animation;
+  late AnimationController _controller;
+  late Animation _animation;
 
   ///这个定时器是因为hero动画大概时间是1秒，等动画结束后再执行列表划出动画
   ///不过如果任务详情页是从"完成列表"页面过来的，就没有hero动画了，自然不需要这个timer
-  Timer timer;
+  late Timer timer;
 
   @override
   void initState() {
@@ -45,20 +46,20 @@ class _TaskDetailItemState extends State<TaskDetailItem>
         vsync: this, duration: Duration(milliseconds: 1000));
     _animation = Tween(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
-    if(!widget.showAnimation) {
-      _controller?.forward();
+    if (!widget.showAnimation) {
+      _controller.forward();
       return;
     }
-      timer = Timer(Duration(milliseconds: 600), () {
-      _controller?.forward();
+    timer = Timer(Duration(milliseconds: 600), () {
+      _controller.forward();
     });
     super.initState();
   }
 
   @override
   void dispose() {
-    timer?.cancel();
-    _controller?.dispose();
+    timer.cancel();
+    _controller.dispose();
     debugPrint("taskDetailItem ${widget.index} 销毁");
     super.dispose();
   }
@@ -88,14 +89,14 @@ class _TaskDetailItemState extends State<TaskDetailItem>
                     value: currentProgress == 1.0,
                     onChanged: (value) {
                       setState(() {
-                        if (value) {
+                        if (value != null) {
                           currentProgress = 1.0;
                         } else {
                           currentProgress = 0.0;
                         }
                       });
                       if (widget.onChecked != null) {
-                        widget.onChecked(currentProgress);
+                        widget.onChecked!(currentProgress);
                       }
                     },
                     activeColor:
@@ -113,7 +114,7 @@ class _TaskDetailItemState extends State<TaskDetailItem>
                             currentProgress = 1.0;
                           }
                           if (widget.onChecked != null) {
-                            widget.onChecked(currentProgress);
+                            widget.onChecked!(currentProgress);
                           }
                         });
                       },
@@ -121,7 +122,10 @@ class _TaskDetailItemState extends State<TaskDetailItem>
                           margin: EdgeInsets.only(
                             left: 5,
                           ),
-                          child: Text("${widget.itemName}", style: TextStyle(color: widget.textColor),)),
+                          child: Text(
+                            "${widget.itemName}",
+                            style: TextStyle(color: widget.textColor),
+                          )),
                     )),
                 Expanded(
                     flex: 1,
@@ -129,7 +133,10 @@ class _TaskDetailItemState extends State<TaskDetailItem>
                         ? SizedBox()
                         : Text(
                             "${(currentProgress * 100).toInt()}%",
-                            style: TextStyle(fontSize: 8,color: widget.textColor,),
+                            style: TextStyle(
+                              fontSize: 8,
+                              color: widget.textColor,
+                            ),
                           )),
                 Expanded(
                     flex: 1,
@@ -170,7 +177,7 @@ class _TaskDetailItemState extends State<TaskDetailItem>
                     currentProgress = value;
                   });
                   if (widget.onProgressChanged != null) {
-                    widget.onProgressChanged(value);
+                    widget.onProgressChanged!(value);
                   }
                 }),
           ),
@@ -182,7 +189,10 @@ class _TaskDetailItemState extends State<TaskDetailItem>
           flex: 2,
           child: Text(
             "${(currentProgress * 100).toInt()}%",
-            style: TextStyle(fontSize: 8,color: widget.textColor,),
+            style: TextStyle(
+              fontSize: 8,
+              color: widget.textColor,
+            ),
           ),
         ),
       ],

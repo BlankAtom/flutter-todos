@@ -6,24 +6,23 @@ import 'package:todo_list/json/task_icon_bean.dart';
 import 'package:todo_list/utils/shared_util.dart';
 import 'package:todo_list/utils/theme_util.dart';
 
-class IconListUtil{
-  static IconListUtil _instance;
+class IconListUtil {
+  static IconListUtil _instance = IconListUtil._internal();
 
-  static IconListUtil getInstance(){
-    if(_instance == null){
-        _instance = IconListUtil._internal();
-    }
+  factory IconListUtil() {
     return _instance;
   }
 
   IconListUtil._internal();
 
+  static IconListUtil getInstance() => _instance;
 
-  List<TaskIconBean> getDefaultTaskIcons(BuildContext context){
-    return [TaskIconBean(
-        taskName: IntlLocalizations.of(context).music,
-        iconBean: IconBean.fromIconData(Icons.music_note),
-        colorBean: ColorBean.fromColor(MyThemeColor.coffeeColor)),
+  List<TaskIconBean> getDefaultTaskIcons(BuildContext context) {
+    return [
+      TaskIconBean(
+          taskName: IntlLocalizations.of(context).music,
+          iconBean: IconBean.fromIconData(Icons.music_note),
+          colorBean: ColorBean.fromColor(MyThemeColor.coffeeColor)),
       TaskIconBean(
           taskName: IntlLocalizations.of(context).game,
           iconBean: IconBean.fromIconData(Icons.videogame_asset),
@@ -43,13 +42,11 @@ class IconListUtil{
       TaskIconBean(
           taskName: IntlLocalizations.of(context).work,
           iconBean: IconBean.fromIconData(Icons.work),
-          colorBean: ColorBean.fromColor(MyThemeColor.blueGrayColor)),];
+          colorBean: ColorBean.fromColor(MyThemeColor.blueGrayColor)),
+    ];
   }
 
-
-
-  Future<List<TaskIconBean>> getIconWithCache(BuildContext context) async{
-
+  Future<List<TaskIconBean>> getIconWithCache(BuildContext context) async {
     List<String> strings =
         await SharedUtil.instance.readList(Keys.taskIconBeans);
     List<TaskIconBean> list = [];
@@ -58,16 +55,19 @@ class IconListUtil{
       TaskIconBean taskIconBean = TaskIconBean.fromMap(data);
       list.add(taskIconBean);
     }
-    final hasSaveDefaultIcons = await SharedUtil.instance.getBoolean(Keys.hasSavedDefaultIcons) ?? false;
-    List<TaskIconBean>  defaultList = [];
-    if(!hasSaveDefaultIcons){
+    final hasSaveDefaultIcons =
+        await SharedUtil.instance.getBoolean(Keys.hasSavedDefaultIcons) ??
+            false;
+    List<TaskIconBean> defaultList = [];
+    if (!hasSaveDefaultIcons) {
       defaultList = getDefaultTaskIcons(context);
       await SharedUtil.instance.saveBoolean(Keys.hasSavedDefaultIcons, true);
       List<String> defaultIcons = [];
       for (var defaultIcon in defaultList) {
         defaultIcons.add(jsonEncode(defaultIcon.toMap()));
       }
-      await SharedUtil.instance.saveStringList(Keys.taskIconBeans, defaultIcons+ strings);
+      await SharedUtil.instance
+          .saveStringList(Keys.taskIconBeans, defaultIcons + strings);
     }
     return List.from(defaultList + list);
   }

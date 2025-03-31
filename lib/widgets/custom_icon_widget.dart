@@ -4,17 +4,18 @@ import 'package:todo_list/i10n/localization_intl.dart';
 import 'package:todo_list/utils/theme_util.dart';
 
 class CustomIconWidget extends StatefulWidget {
-  final IconData iconData;
-  final Function onApplyTap;
-  final Color pickerColor;
-  final ValueChanged<String> onTextChange;
-  final String iconName;
+  final IconData? iconData;
+  final Function? onApplyTap;
+  final Color? pickerColor;
+  final ValueChanged<String>? onTextChange;
+  final String? iconName;
 
   CustomIconWidget({
     this.iconData,
     this.onApplyTap,
     this.pickerColor,
-    this.onTextChange, this.iconName,
+    this.onTextChange,
+    this.iconName,
   })  : assert(iconData != null),
         assert(onApplyTap != null),
         assert(onTextChange != null),
@@ -35,8 +36,8 @@ class _CustomIconWidgetState extends State<CustomIconWidget> {
     MyThemeColor.defaultColor,
   ];
 
-  Color currentIconColor;
-  int currentSelectIndex;
+  late Color? currentIconColor;
+  late int currentSelectIndex;
 
   @override
   void initState() {
@@ -58,8 +59,8 @@ class _CustomIconWidgetState extends State<CustomIconWidget> {
               autovalidateMode: AutovalidateMode.always,
               child: TextFormField(
                 initialValue: widget.iconName ?? null,
-                validator: (text){
-                  widget.onTextChange(text);
+                validator: (text) {
+                  widget.onTextChange!(text!);
                   return null;
                 },
                 style: TextStyle(textBaseline: TextBaseline.alphabetic),
@@ -124,7 +125,7 @@ class _CustomIconWidgetState extends State<CustomIconWidget> {
                         end: Alignment.bottomRight,
                       ),
                       border: currentSelectIndex == 7
-                          ? Border.all(color: currentIconColor, width: 4)
+                          ? Border.all(color: currentIconColor!, width: 4)
                           : null,
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
@@ -134,7 +135,7 @@ class _CustomIconWidgetState extends State<CustomIconWidget> {
                     flex: 2,
                     child: Container(
                       alignment: Alignment.centerRight,
-                      child: FlatButton(
+                      child: TextButton(
                         child: Text(
                           IntlLocalizations.of(context).cancel,
                           style: TextStyle(color: Colors.redAccent),
@@ -148,13 +149,13 @@ class _CustomIconWidgetState extends State<CustomIconWidget> {
                   flex: 2,
                   child: Container(
                     alignment: Alignment.centerRight,
-                    child: FlatButton(
+                    child: TextButton(
                       child: Text(
                         IntlLocalizations.of(context).ok,
                         style: TextStyle(color: Colors.black),
                       ),
                       onPressed: () {
-                        widget.onApplyTap(currentIconColor);
+                        widget.onApplyTap!(currentIconColor);
                         Navigator.of(context).pop();
                       },
                     ),
@@ -179,7 +180,7 @@ class _CustomIconWidgetState extends State<CustomIconWidget> {
             title: Text(IntlLocalizations.of(context).pickAColor),
             content: SingleChildScrollView(
               child: ColorPicker(
-                pickerColor: currentIconColor,
+                pickerColor: currentIconColor!,
                 onColorChanged: (color) {
                   currentIconColor = color;
                   currentSelectIndex = 7;
@@ -188,7 +189,7 @@ class _CustomIconWidgetState extends State<CustomIconWidget> {
               ),
             ),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 child: Text(
                   IntlLocalizations.of(context).cancel,
                   style: TextStyle(color: Colors.redAccent),
@@ -199,7 +200,7 @@ class _CustomIconWidgetState extends State<CustomIconWidget> {
                   Navigator.of(context).pop();
                 },
               ),
-              FlatButton(
+              TextButton(
                 child: Text(IntlLocalizations.of(context).ok),
                 onPressed: () {
                   setState(() {});

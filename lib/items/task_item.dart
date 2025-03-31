@@ -8,8 +8,8 @@ import 'package:todo_list/widgets/task_info_widget.dart';
 class TaskItem extends StatelessWidget {
   final int index;
   final TaskBean taskBean;
-  final VoidCallback onDelete;
-  final VoidCallback onEdit;
+  final VoidCallback? onDelete;
+  final VoidCallback? onEdit;
 
   TaskItem(this.index, this.taskBean, {this.onDelete, this.onEdit});
 
@@ -45,24 +45,24 @@ class TaskItem extends StatelessWidget {
                     : DecorationImage(
                         image: getProvider(bgUrl),
                         colorFilter: new ColorFilter.mode(
-                            Colors.black.withOpacity(opacity), BlendMode.dstATop),
+                            Colors.black.withOpacity(opacity),
+                            BlendMode.dstATop),
                         fit: BoxFit.cover,
                       ),
               ),
             ),
           ),
           Container(
-            child: Container(
-              margin: EdgeInsets.all(0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
               child: Container(
-                margin: EdgeInsets.only(left: 16, right: 16),
-                child: widget,
-              ),
-            )
-          ),
+            margin: EdgeInsets.all(0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+            child: Container(
+              margin: EdgeInsets.only(left: 16, right: 16),
+              child: widget,
+            ),
+          )),
         ],
       ),
     );

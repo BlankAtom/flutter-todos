@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:todo_list/i10n/localization_intl.dart';
 
 class EditDialog extends StatelessWidget {
-  final VoidCallback onPositive;
-  final bool positiveWithPop;
-  final String title;
-  final String hintText;
-  final String initialValue;
-  final ValueChanged<String> onValueChanged;
-  final TextStyle cancelTextStyle;
-  final TextStyle sureTextStyle;
+  final VoidCallback? onPositive;
+  final bool? positiveWithPop;
+  final String? title;
+  final String? hintText;
+  final String? initialValue;
+  final ValueChanged<String>? onValueChanged;
+  final TextStyle? cancelTextStyle;
+  final TextStyle? sureTextStyle;
 
   const EditDialog({
-    Key key,
+    required Key key,
     this.onPositive,
     this.title,
     this.hintText,
@@ -35,7 +35,7 @@ class EditDialog extends StatelessWidget {
           style: TextStyle(textBaseline: TextBaseline.alphabetic),
           initialValue: initialValue ?? "",
           validator: (text) {
-            if (onValueChanged != null) onValueChanged(text);
+            if (onValueChanged != null) onValueChanged!(text!);
             return null;
           },
           decoration: InputDecoration(
@@ -44,7 +44,7 @@ class EditDialog extends StatelessWidget {
         ),
       ),
       actions: <Widget>[
-        FlatButton(
+        TextButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -53,10 +53,10 @@ class EditDialog extends StatelessWidget {
             style: cancelTextStyle ?? TextStyle(color: Colors.redAccent),
           ),
         ),
-        FlatButton(
+        TextButton(
           onPressed: () {
             onPositive?.call();
-            if(positiveWithPop) Navigator.of(context).pop();
+            if (positiveWithPop ?? false) Navigator.of(context).pop();
           },
           child: Text(IntlLocalizations.of(context).ok,
               style: sureTextStyle ?? TextStyle(color: Colors.black)),

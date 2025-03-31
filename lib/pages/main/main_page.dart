@@ -1,6 +1,7 @@
 import 'dart:math';
-import 'package:flutter/material.dart';
+
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list/i10n/localization_intl.dart';
 import 'package:todo_list/model/global_model.dart';
@@ -32,10 +33,10 @@ class MainPage extends StatelessWidget {
             elevation: 0,
             title: Text(IntlLocalizations.of(context).appName),
             leading: !canHideWidget
-                ? FlatButton(
+                ? TextButton(
                     child: MenuIcon(globalModel.logic.getWhiteInDark()),
                     onPressed: () {
-                      model.scaffoldKey.currentState.openDrawer();
+                      model.scaffoldKey.currentState?.openDrawer();
                     },
                   )
                 : Container(),
@@ -70,7 +71,8 @@ class MainPage extends StatelessWidget {
                   child: AnimatedFloatingButton(
                     bgColor: globalModel.isBgChangeWithCard
                         ? model.logic.getCurrentCardColor()
-                        : null,
+                        : Colors.transparent,
+                    key: GlobalKey(),
                   ),
                 )
               : Container(),
@@ -115,6 +117,7 @@ class MainPage extends StatelessWidget {
                                   child: model.needSyn
                                       ? SynchronizeWidget(
                                           mainPageModel: model,
+                                          key: GlobalKey(),
                                         )
                                       : Container(),
                                 ),

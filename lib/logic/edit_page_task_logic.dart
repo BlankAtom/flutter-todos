@@ -4,7 +4,6 @@ import 'package:todo_list/database/database.dart';
 import 'package:todo_list/i10n/localization_intl.dart';
 import 'package:todo_list/json/task_bean.dart';
 import 'package:todo_list/json/task_icon_bean.dart';
-import 'package:todo_list/json/theme_bean.dart';
 import 'package:todo_list/model/all_model.dart';
 import 'package:todo_list/utils/shared_util.dart';
 import 'package:todo_list/widgets/custom_icon_widget.dart';
@@ -15,7 +14,8 @@ class EditTaskPageLogic {
 
   EditTaskPageLogic(this._model);
 
-  Widget getIconText({Icon icon, String text, VoidCallback onTap}) {
+  Widget getIconText(
+      {required Icon icon, String text = '', VoidCallback? onTap}) {
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -60,7 +60,7 @@ class EditTaskPageLogic {
       final scroller = _model.scrollController;
       debugPrint(
           "当前:${scroller?.position?.pixels ?? 100}  全:${scroller?.position?.maxScrollExtent ?? 100}");
-      scroller?.animateTo(scroller?.position?.maxScrollExtent,
+      scroller.animateTo(scroller.position.maxScrollExtent,
           duration: Duration(milliseconds: 200), curve: Curves.easeInOutSine);
     } else {
       debugPrint("软键盘收起");
@@ -96,7 +96,7 @@ class EditTaskPageLogic {
       (day) {
         if (day == null) return;
         if (_model.startDate != null) {
-          if (day.isBefore(_model.startDate)) {
+          if (day.isBefore(_model.startDate!)) {
             showDialog(
                 context: _model.context,
                 builder: (ctx) {
@@ -104,7 +104,7 @@ class EditTaskPageLogic {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(20.0))),
                     content: Text(
-                        IntlLocalizations.of(_model.context).endBeforeStart),
+                        IntlLocalizations.of(_model.context)!.endBeforeStart),
                   );
                 });
             return;
@@ -125,7 +125,7 @@ class EditTaskPageLogic {
       (day) {
         if (day == null) return;
         if (_model.deadLine != null) {
-          if (day.isAfter(_model.deadLine)) {
+          if (day.isAfter(_model.deadLine!)) {
             showDialog(
                 context: _model.context,
                 builder: (ctx) {
@@ -133,7 +133,7 @@ class EditTaskPageLogic {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(20.0))),
                     content: Text(
-                        IntlLocalizations.of(_model.context).startAfterEnd),
+                        IntlLocalizations.of(_model.context)!.startAfterEnd),
                   );
                 });
             return;
@@ -145,27 +145,27 @@ class EditTaskPageLogic {
     );
   }
 
-  Future<DateTime> showDP(DateTime firstDate, DateTime initialDate,
+  Future<DateTime?> showDP(DateTime firstDate, DateTime initialDate,
       DateTime lastDate, bool isDarkNow) {
     return showDatePicker(
       context: _model.context,
       initialDate: firstDate,
       firstDate: initialDate,
       lastDate: lastDate,
-      builder: (BuildContext context, Widget child) {
-        final color = ColorBean.fromBean(_model.taskIcon.colorBean);
+      builder: (context, child) {
+        final color = ColorBean.fromBean(_model.taskIcon!.colorBean!);
         return Theme(
-            child: child,
-            data: isDarkNow
-                ? ThemeData.dark()
-                : ThemeData(
-                    primaryColor: color,
-                    accentColor: color,
-                    backgroundColor: Colors.white,
-                    buttonTheme:
-                        ButtonThemeData(textTheme: ButtonTextTheme.accent),
-                  ),
-          );
+          child: child ?? Container(),
+          data: isDarkNow
+              ? ThemeData.dark()
+              : ThemeData(
+                  primaryColor: color,
+                  hintColor: color,
+                  scaffoldBackgroundColor: Colors.white,
+                  buttonTheme:
+                      ButtonThemeData(textTheme: ButtonTextTheme.accent),
+                ),
+        );
       },
     );
   }
@@ -173,19 +173,19 @@ class EditTaskPageLogic {
   //将结束时间做个转换
   String getEndTimeText() {
     if (_model.deadLine != null) {
-      final time = _model.deadLine;
+      final time = _model.deadLine!;
       return "${time.year}-${time.month}-${time.day}";
     }
-    return IntlLocalizations.of(_model.context).deadline;
+    return IntlLocalizations.of(_model.context)!.deadline;
   }
 
   //将开始时间做转换
   String getStartTimeText() {
     if (_model.startDate != null) {
-      final time = _model.startDate;
+      final time = _model.startDate!;
       return "${time.year}-${time.month}-${time.day}";
     }
-    return IntlLocalizations.of(_model.context).startDate;
+    return IntlLocalizations.of(_model.context)!.startDate;
   }
 
   //将DateTime转换为String
@@ -213,35 +213,36 @@ class EditTaskPageLogic {
             return AlertDialog(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              content: Text(
-                  IntlLocalizations.of(_model.context).writeAtLeastOneTaskItem),
+              content: Text(IntlLocalizations.of(_model.context)!
+                  .writeAtLeastOneTaskItem),
             );
           });
       return;
     }
     TaskBean taskBean = await transformDataToBean();
-    if(taskBean.account == 'default'){
+    if (taskBean.account == 'default') {
       await exitWithSubmitNewTask(taskBean);
     } else {
       postCreateTask(taskBean);
     }
   }
 
-  Future exitWithSubmitNewTask(TaskBean taskBean,{bool needCancelDialog = false}) async {
+  Future exitWithSubmitNewTask(TaskBean taskBean,
+      {bool needCancelDialog = false}) async {
     await DBProvider.db.createTask(taskBean);
-    await _model.mainPageModel.logic.getTasks();
-    _model.mainPageModel.refresh();
+    await _model.mainPageModel?.logic.getTasks();
+    _model.mainPageModel?.refresh();
     Navigator.of(_model.context).pop();
-    if(needCancelDialog) Navigator.of(_model.context).pop();
+    if (needCancelDialog) Navigator.of(_model.context).pop();
   }
 
   Future exitWhenSubmitOldTask(TaskBean taskBean) async {
     DBProvider.db.updateTask(taskBean);
-    await _model.mainPageModel.logic.getTasks();
-    _model.mainPageModel.refresh();
+    await _model.mainPageModel?.logic.getTasks();
+    _model.mainPageModel?.refresh();
     if (_model.taskDetailPageModel != null) {
-      _model.taskDetailPageModel.isExiting = true;
-      _model.taskDetailPageModel.refresh();
+      _model.taskDetailPageModel?.isExiting = true;
+      _model.taskDetailPageModel?.refresh();
     }
     Navigator.of(_model.context).popUntil((route) => route.isFirst);
   }
@@ -255,73 +256,91 @@ class EditTaskPageLogic {
             return AlertDialog(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              content: Text(
-                  IntlLocalizations.of(_model.context).writeAtLeastOneTaskItem),
+              content: Text(IntlLocalizations.of(_model.context)!
+                  .writeAtLeastOneTaskItem),
             );
           });
       return;
     }
     TaskBean taskBean = await transformDataToBean(
-        id: _model.oldTaskBean.id, overallProgress: _getOverallProgress());
+        id: _model.oldTaskBean?.id, overallProgress: _getOverallProgress());
     taskBean.changeTimes++;
-    if(taskBean.account == 'default'){
+    if (taskBean.account == 'default') {
       await exitWhenSubmitOldTask(taskBean);
     } else {
-      taskBean.uniqueId == null ? postCreateTask(taskBean, isSubmitOldTask: true) : postUpdateTask(taskBean);
+      taskBean.uniqueId == null
+          ? postCreateTask(taskBean, isSubmitOldTask: true)
+          : postUpdateTask(taskBean);
     }
   }
 
   ///在云端创建一个任务
-  void postCreateTask(TaskBean taskBean,{bool isSubmitOldTask = false}) async{
-    showDialog(context: _model.context, builder: (ctx){
-      return NetLoadingWidget();
-    });
+  void postCreateTask(TaskBean taskBean, {bool isSubmitOldTask = false}) async {
+    showDialog(
+        context: _model.context,
+        builder: (ctx) {
+          return NetLoadingWidget(
+            key: GlobalKey(),
+          );
+        });
     final token = await SharedUtil.instance.getString(Keys.token);
     ApiService.instance.postCreateTask(
-      success: (UploadTaskBean bean){
+      success: (UploadTaskBean bean) {
         taskBean.uniqueId = bean.uniqueId;
         taskBean.needUpdateToCloud = 'false';
-        isSubmitOldTask ? exitWhenSubmitOldTask(taskBean) : exitWithSubmitNewTask(taskBean, needCancelDialog: true);
+        isSubmitOldTask
+            ? exitWhenSubmitOldTask(taskBean)
+            : exitWithSubmitNewTask(taskBean, needCancelDialog: true);
       },
-      failed: (UploadTaskBean bean){
+      failed: (UploadTaskBean bean) {
         taskBean.needUpdateToCloud = 'true';
-        _model.mainPageModel.needSyn = true;
-        isSubmitOldTask ? exitWhenSubmitOldTask(taskBean) : exitWithSubmitNewTask(taskBean, needCancelDialog: true);
+        _model.mainPageModel?.needSyn = true;
+        isSubmitOldTask
+            ? exitWhenSubmitOldTask(taskBean)
+            : exitWithSubmitNewTask(taskBean, needCancelDialog: true);
       },
-      error: (msg){
+      error: (msg) {
         taskBean.needUpdateToCloud = 'true';
-        _model.mainPageModel.needSyn = true;
-        isSubmitOldTask ? exitWhenSubmitOldTask(taskBean) : exitWithSubmitNewTask(taskBean, needCancelDialog: true);
+        _model.mainPageModel?.needSyn = true;
+        isSubmitOldTask
+            ? exitWhenSubmitOldTask(taskBean)
+            : exitWithSubmitNewTask(taskBean, needCancelDialog: true);
       },
       taskBean: taskBean,
-      token: token,
+      token: token ?? 'None Token',
       cancelToken: _model.cancelToken,
     );
   }
 
   ///在云端更新一个任务
-  void postUpdateTask(TaskBean taskBean, ) async{
-    showDialog(context: _model.context, builder: (ctx){
-      return NetLoadingWidget();
-    });
+  void postUpdateTask(
+    TaskBean taskBean,
+  ) async {
+    showDialog(
+        context: _model.context,
+        builder: (ctx) {
+          return NetLoadingWidget(
+            key: GlobalKey(),
+          );
+        });
     final token = await SharedUtil.instance.getString(Keys.token);
     ApiService.instance.postUpdateTask(
-      success: (CommonBean bean){
+      success: (CommonBean bean) {
         taskBean.needUpdateToCloud = 'false';
         exitWhenSubmitOldTask(taskBean);
       },
-      failed: (CommonBean bean){
+      failed: (CommonBean bean) {
         taskBean.needUpdateToCloud = 'true';
-        _model.mainPageModel.needSyn = true;
+        _model.mainPageModel?.needSyn = true;
         exitWhenSubmitOldTask(taskBean);
       },
-      error: (msg){
+      error: (msg) {
         taskBean.needUpdateToCloud = 'true';
-        _model.mainPageModel.needSyn = true;
+        _model.mainPageModel?.needSyn = true;
         exitWhenSubmitOldTask(taskBean);
       },
       taskBean: taskBean,
-      token: token,
+      token: token ?? 'None Token',
       cancelToken: _model.cancelToken,
     );
   }
@@ -337,32 +356,32 @@ class EditTaskPageLogic {
   }
 
   Future<TaskBean> transformDataToBean(
-      {int id, double overallProgress = 0.0}) async {
+      {int? id, double overallProgress = 0.0}) async {
     final account =
         await SharedUtil.instance.getString(Keys.account) ?? "default";
     final taskName = _model.currentTaskName.isEmpty
-        ? _model.taskIcon.taskName
+        ? _model.taskIcon?.taskName
         : _model.currentTaskName;
     final createDate = _model?.createDate?.toIso8601String() ??
         DateTime.now().toIso8601String();
     TaskBean taskBean = TaskBean(
-      taskName: taskName,
+      taskName: taskName!,
       account: account,
       taskStatus: _model.oldTaskBean?.taskStatus ?? TaskStatus.todo,
       needUpdateToCloud: _model.oldTaskBean?.needUpdateToCloud ?? 'false',
       uniqueId: _model.uniqueId ?? null,
-      taskType: _model.taskIcon.taskName,
+      taskType: _model.taskIcon!.taskName!,
       taskDetailNum: _model.taskDetails.length,
       createDate: createDate,
-      startDate: _model.startDate?.toIso8601String(),
-      deadLine: _model.deadLine?.toIso8601String(),
+      startDate: _model.startDate!.toIso8601String(),
+      deadLine: _model.deadLine!.toIso8601String(),
       detailList: _model.taskDetails,
       taskIconBean: _model.taskIcon,
       changeTimes: _model.changeTimes,
       overallProgress: overallProgress,
       backgroundUrl: _model.backgroundUrl,
       textColor: _model.textColorBean,
-      finishDate: _model?.finishDate?.toIso8601String() ?? "",
+      finishDate: _model.finishDate!.toIso8601String() ?? "",
     );
     if (id != null) {
       taskBean.id = id;
@@ -371,22 +390,22 @@ class EditTaskPageLogic {
   }
 
   //用旧任务数据初始化所有数据
-  void initialDataFromOld(TaskBean oldTaskBean) {
+  void initialDataFromOld(TaskBean? oldTaskBean) {
     if (oldTaskBean != null) {
       _model.taskDetails.clear();
-      _model.taskDetails.addAll(oldTaskBean.detailList);
+      _model.taskDetails.addAll(oldTaskBean.detailList!);
       if (oldTaskBean.deadLine != null)
         _model.deadLine = DateTime.parse(oldTaskBean.deadLine);
       if (oldTaskBean.startDate != null)
         _model.startDate = DateTime.parse(oldTaskBean.startDate);
       _model.createDate = DateTime.parse(oldTaskBean.createDate);
-      if(oldTaskBean.finishDate.isNotEmpty)
-      _model.finishDate = DateTime.parse(oldTaskBean.finishDate);
+      if (oldTaskBean.finishDate.isNotEmpty)
+        _model.finishDate = DateTime.parse(oldTaskBean.finishDate);
       _model.changeTimes = oldTaskBean.changeTimes ?? 0;
-      _model.taskIcon = oldTaskBean.taskIconBean;
+      _model.taskIcon = oldTaskBean.taskIconBean!;
       _model.currentTaskName = oldTaskBean.taskName;
-      _model.backgroundUrl = oldTaskBean.backgroundUrl;
-      _model.textColorBean = oldTaskBean.textColor;
+      _model.backgroundUrl = oldTaskBean.backgroundUrl!;
+      _model.textColorBean = oldTaskBean.textColor!;
     }
   }
 
@@ -399,8 +418,8 @@ class EditTaskPageLogic {
     bool isEdit = isEditOldTask();
     final context = _model.context;
     String defaultTitle =
-        "${IntlLocalizations.of(context).defaultTitle}:${_model.taskIcon.taskName}";
-    String oldTaskTitle = "${_model?.oldTaskBean?.taskName}";
+        "${IntlLocalizations.of(context)?.defaultTitle}:${_model.taskIcon?.taskName}";
+    String oldTaskTitle = "${_model.oldTaskBean?.taskName ?? ''}";
     return isEdit ? oldTaskTitle : defaultTitle;
   }
 
@@ -413,8 +432,7 @@ class EditTaskPageLogic {
   }
 
   ///编辑任务图标
-  void onIconPress(IconBean iconBean,
-      ColorBean colorBean) {
+  void onIconPress(IconBean iconBean, ColorBean colorBean) {
     showDialog(
       barrierDismissible: false,
       context: _model.context,
@@ -424,28 +442,29 @@ class EditTaskPageLogic {
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
             elevation: 0.0,
             contentPadding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-            title: Text(IntlLocalizations.of(_model.context).customIcon),
+            title: Text(IntlLocalizations.of(_model.context)!.customIcon),
             content: CustomIconWidget(
               iconData: IconBean.fromBean(iconBean),
               onApplyTap: (Color color) async {
-                _model.taskIcon.colorBean = ColorBean.fromColor(color);
+                _model.taskIcon?.colorBean = ColorBean.fromColor(color);
                 _model.refresh();
               },
               pickerColor: ColorBean.fromBean(colorBean),
               onTextChange: (text) {
                 final name = text.isEmpty
-                    ? IntlLocalizations.of(_model.context).defaultIconName
+                    ? IntlLocalizations.of(_model.context)?.defaultIconName
                     : text;
-                _model.taskIcon.iconBean.iconName = name;
+                _model.taskIcon?.iconBean?.iconName = name;
               },
-              iconName: iconBean.iconName,
+              iconName: iconBean.iconName!,
             ));
-      },);
+      },
+    );
   }
 
   void moveTaskDetail(int oldIndex, int newIndex) {
     var oldDetail = _model.taskDetails.removeAt(oldIndex);
-    if(newIndex >= _model.taskDetails.length){
+    if (newIndex >= _model.taskDetails.length) {
       _model.taskDetails.add(oldDetail);
     } else {
       _model.taskDetails.insert(newIndex, oldDetail);

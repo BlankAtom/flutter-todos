@@ -35,7 +35,7 @@ class DoneTaskPageLogic {
 
   //将时间做转换
   String getTimeText(String date) {
-    if(date.isEmpty){
+    if (date.isEmpty) {
       date = DateTime.now().toIso8601String();
     }
     DateTime time = DateTime.parse(date);
@@ -43,7 +43,7 @@ class DoneTaskPageLogic {
   }
 
   String getDiffTimeText(String dateStart, String dateEnd) {
-    if(dateEnd.isEmpty){
+    if (dateEnd.isEmpty) {
       dateEnd = DateTime.now().toIso8601String();
     }
     DateTime timeStart = DateTime.parse(dateStart);
@@ -51,9 +51,8 @@ class DoneTaskPageLogic {
     Duration diff = timeEnd.difference(timeStart);
     final context = _model.context;
 
-
     return diff.inDays == 0
-        ? "${IntlLocalizations.of(context).hours(diff.inHours.abs())}"
-        : "${IntlLocalizations.of(context).days(diff.inDays.abs())}";
+        ? "${IntlLocalizations.of(context)!.hours(diff.inHours.abs())}"
+        : "${IntlLocalizations.of(context)!.days(diff.inDays.abs())}";
   }
 }

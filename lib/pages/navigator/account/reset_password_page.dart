@@ -38,10 +38,11 @@ class ResetPasswordPage extends StatelessWidget {
                         focusNode: model.emailFocusNode
                           ..addListener(() {
                             if (!model.emailFocusNode.hasFocus) {
-                              model.emailKey.currentState.validate();
+                              model.emailKey.currentState?.validate();
                             }
                           }),
-                        validator: (text) => model.logic.validatorEmail(text),
+                        validator: (text) =>
+                            model.logic.validatorEmail(text ?? ''),
                         decoration: InputDecoration(
                           filled: true,
                           prefixIcon: Icon(Icons.email),
@@ -57,15 +58,16 @@ class ResetPasswordPage extends StatelessWidget {
               model.isReset
                   ? Container()
                   : Form(
-                key: model.verifyCodeKey,
+                      key: model.verifyCodeKey,
                       child: TextFormField(
-                        focusNode: model.verifyCodeFocusNode..addListener((){
-                          if(!model.verifyCodeFocusNode.hasFocus){
-                            model.verifyCodeKey.currentState.validate();
-                          }
-                        }),
+                        focusNode: model.verifyCodeFocusNode
+                          ..addListener(() {
+                            if (!model.verifyCodeFocusNode.hasFocus) {
+                              model.verifyCodeKey.currentState?.validate();
+                            }
+                          }),
                         validator: (verifyCode) =>
-                            model.logic.validatorVerifyCode(verifyCode),
+                            model.logic.validatorVerifyCode(verifyCode ?? ''),
                         maxLength: 6,
                         keyboardType: TextInputType.number,
                         style: TextStyle(textBaseline: TextBaseline.alphabetic),
@@ -80,23 +82,25 @@ class ResetPasswordPage extends StatelessWidget {
                               account: model.emailAccount,
                               isEmailOk: model.isEmailOk,
                               isForgetPassword: true,
+                              key: GlobalKey(),
                             )),
                       ),
                     ),
               model.isReset ? const SizedBox(height: 24.0) : Container(),
               model.isReset
                   ? Form(
-                key: model.oldPasswordKey,
-                    child: TextFormField(
-                      focusNode: model.oldPasswordFocusNode..addListener((){
-                        if(!model.oldPasswordFocusNode.hasFocus){
-                          model.oldPasswordKey.currentState.validate();
-                        }
-                      }),
+                      key: model.oldPasswordKey,
+                      child: TextFormField(
+                        focusNode: model.oldPasswordFocusNode
+                          ..addListener(() {
+                            if (!model.oldPasswordFocusNode.hasFocus) {
+                              model.oldPasswordKey.currentState?.validate();
+                            }
+                          }),
                         style: TextStyle(textBaseline: TextBaseline.alphabetic),
                         maxLength: 20,
                         validator: (password) =>
-                            model.logic.validateOldPassword(password),
+                            model.logic.validateOldPassword(password ?? ''),
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: Colors.transparent,
@@ -107,20 +111,21 @@ class ResetPasswordPage extends StatelessWidget {
                         ),
                         obscureText: true,
                       ),
-                  )
+                    )
                   : Container(),
               SizedBox(height: 24.0),
               Form(
                 key: model.passwordKey,
                 child: TextFormField(
-                  focusNode: model.passwordFocusNode..addListener((){
-                    if(!model.passwordFocusNode.hasFocus){
-                      model.passwordKey.currentState.validate();
-                    }
-                  }),
+                  focusNode: model.passwordFocusNode
+                    ..addListener(() {
+                      if (!model.passwordFocusNode.hasFocus) {
+                        model.passwordKey.currentState?.validate();
+                      }
+                    }),
                   maxLength: 20,
                   validator: (password) =>
-                      model.logic.validateNewPassword(password),
+                      model.logic.validateNewPassword(password ?? ''),
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.transparent,
@@ -136,14 +141,15 @@ class ResetPasswordPage extends StatelessWidget {
               Form(
                 key: model.rePasswordKey,
                 child: TextFormField(
-                  focusNode: model.rePasswordFocusNode..addListener((){
-                    if(!model.rePasswordFocusNode.hasFocus){
-                      model.rePasswordKey.currentState.validate();
-                    }
-                  }),
+                  focusNode: model.rePasswordFocusNode
+                    ..addListener(() {
+                      if (!model.rePasswordFocusNode.hasFocus) {
+                        model.rePasswordKey.currentState?.validate();
+                      }
+                    }),
                   maxLength: 20,
                   validator: (rePassword) =>
-                      model.logic.validateRePassword(rePassword),
+                      model.logic.validateRePassword(rePassword ?? ''),
                   decoration: InputDecoration(
                     filled: true,
                     prefixIcon: Icon(Icons.lock),

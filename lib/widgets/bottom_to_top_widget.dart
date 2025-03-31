@@ -4,8 +4,11 @@ class BottomToTopWidget extends StatefulWidget {
   final Widget child;
   final int index;
 
-  const BottomToTopWidget({Key key, @required this.child,@required this.index})
-      : super(key: key);
+  const BottomToTopWidget({
+    required Key key,
+    required this.child,
+    required this.index,
+  }) : super(key: key);
 
   @override
   _BottomToTopWidgetState createState() => _BottomToTopWidgetState();
@@ -13,16 +16,16 @@ class BottomToTopWidget extends StatefulWidget {
 
 class _BottomToTopWidgetState extends State<BottomToTopWidget>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation _animation;
+  late AnimationController _controller;
+  late Animation _animation;
 
   @override
   void initState() {
     _controller = AnimationController(
         vsync: this, duration: Duration(milliseconds: 1000));
-    _animation = Tween(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-    Future.delayed(Duration(milliseconds: 200 * widget.index), (){
+    _animation = Tween(begin: 0.0, end: 1.0)
+        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    Future.delayed(Duration(milliseconds: 200 * widget.index), () {
       _controller.forward();
     });
     super.initState();

@@ -1,11 +1,11 @@
 import 'dart:ui';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_list/config/all_types.dart';
 import 'package:todo_list/i10n/localization_intl.dart';
 import 'package:todo_list/model/account_page_model.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 import 'package:todo_list/widgets/custom_cache_image.dart';
 
 class AccountPage extends StatelessWidget {
@@ -26,15 +26,17 @@ class AccountPage extends StatelessWidget {
       child: Stack(
         children: <Widget>[
           Container(
-            width: size.width,
-            height: size.height,
-            child: model.backgroundType == AccountBGType.defaultType
-                ? SvgPicture.asset(
-                    "svgs/bg.svg",
-                    fit: BoxFit.cover,
-                  )
-                : CustomCacheImage(url: model.backgroundUrl)
-          ),
+              width: size.width,
+              height: size.height,
+              child: model.backgroundType == AccountBGType.defaultType
+                  ? SvgPicture.asset(
+                      "svgs/bg.svg",
+                      fit: BoxFit.cover,
+                    )
+                  : CustomCacheImage(
+                      url: model.backgroundUrl,
+                      key: GlobalKey(),
+                    )),
           model.isExisting
               ? Container()
               : BackdropFilter(
@@ -83,26 +85,26 @@ class AccountPage extends StatelessWidget {
                       SizedBox(
                         height: 30,
                       ),
-                      FlatButton(
-                        color: primaryColor,
-                        highlightColor: primaryColorLight,
-                        colorBrightness: Brightness.dark,
-                        splashColor: Colors.grey,
-                        child: Text(IntlLocalizations.of(context).logout),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0)),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor: primaryColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0)),
+                        ),
                         onPressed: model.logic.onLogoutPressed,
+                        child: Text(IntlLocalizations.of(context).logout),
                       ),
-                      FlatButton(
-                        color: primaryColor,
-                        highlightColor: primaryColorLight,
-                        colorBrightness: Brightness.dark,
-                        splashColor: Colors.grey,
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor: primaryColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0)),
+                        ),
+                        onPressed: model.logic.onResetPasswordPressed,
                         child:
                             Text(IntlLocalizations.of(context).resetPassword),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0)),
-                        onPressed: model.logic.onResetPasswordPressed,
                       )
                     ],
                   ),

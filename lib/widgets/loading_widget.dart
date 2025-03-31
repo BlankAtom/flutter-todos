@@ -3,16 +3,16 @@ import 'package:flutter_svg/svg.dart';
 import 'package:todo_list/i10n/localization_intl.dart';
 
 class LoadingWidget extends StatelessWidget {
-  final Color progressColor;
-  final Color textColor;
-  final double textSize;
-  final String loadingText;
-  final String emptyText;
-  final String errorText;
-  final String idleText;
+  final Color? progressColor;
+  final Color? textColor;
+  final double? textSize;
+  final String? loadingText;
+  final String? emptyText;
+  final String? errorText;
+  final String? idleText;
   final LoadingFlag flag;
-  final VoidCallback errorCallBack;
-  final Widget successWidget;
+  final VoidCallback? errorCallBack;
+  final Widget? successWidget;
   final double size;
 
   LoadingWidget(
@@ -23,11 +23,13 @@ class LoadingWidget extends StatelessWidget {
       this.flag = LoadingFlag.loading,
       this.errorCallBack,
       this.emptyText,
-      this.errorText, this.size = 100, this.successWidget, this.idleText});
+      this.errorText,
+      this.size = 100,
+      this.successWidget,
+      this.idleText});
 
   @override
   Widget build(BuildContext context) {
-
     final primaryColor = Theme.of(context).primaryColor;
 
     switch (flag) {
@@ -41,8 +43,8 @@ class LoadingWidget extends StatelessWidget {
                 width: size / 2,
                 child: CircularProgressIndicator(
                   strokeWidth: size / 10,
-                  valueColor: AlwaysStoppedAnimation(
-                      progressColor ?? primaryColor),
+                  valueColor:
+                      AlwaysStoppedAnimation(progressColor ?? primaryColor),
                 ),
               ),
               SizedBox(
@@ -52,7 +54,8 @@ class LoadingWidget extends StatelessWidget {
                 loadingText ?? IntlLocalizations.of(context).loading,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: textSize ?? size / 5, color: textColor ?? primaryColor),
+                    fontSize: textSize ?? size / 5,
+                    color: textColor ?? primaryColor),
               )
             ],
           ),
@@ -70,12 +73,14 @@ class LoadingWidget extends StatelessWidget {
                 height: size,
                 semanticsLabel: 'loading error',
               ),
-              FlatButton(
-                  onPressed: errorCallBack ?? (){},
+              TextButton(
+                  onPressed: errorCallBack ?? () {},
                   child: Text(
-                    "${errorText??""}".isEmpty?IntlLocalizations.of(context).reLoading:errorText,
+                    errorText ?? IntlLocalizations.of(context).reLoading,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: textSize ?? size / 5, color: textColor ?? primaryColor),
+                    style: TextStyle(
+                        fontSize: textSize ?? size / 5,
+                        color: textColor ?? primaryColor),
                   )),
             ],
           ),
@@ -100,7 +105,8 @@ class LoadingWidget extends StatelessWidget {
                 emptyText ?? IntlLocalizations.of(context).loadingEmpty,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: textSize ?? size / 5, color: textColor ?? primaryColor),
+                    fontSize: textSize ?? size / 5,
+                    color: textColor ?? primaryColor),
               ),
             ],
           ),
@@ -123,7 +129,8 @@ class LoadingWidget extends StatelessWidget {
                 idleText ?? IntlLocalizations.of(context).loadingIdle,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: textSize ?? size / 5, color: textColor ?? primaryColor),
+                    fontSize: textSize ?? size / 5,
+                    color: textColor ?? primaryColor),
               )
             ],
           ),
@@ -134,4 +141,4 @@ class LoadingWidget extends StatelessWidget {
   }
 }
 
-enum LoadingFlag { loading, error, success, empty ,idle}
+enum LoadingFlag { loading, error, success, empty, idle }

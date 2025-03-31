@@ -4,17 +4,17 @@ import 'package:todo_list/json/theme_bean.dart';
 import 'package:todo_list/json/weather_bean.dart';
 import 'package:todo_list/logic/all_logic.dart';
 import 'package:todo_list/model/all_model.dart';
-import 'package:todo_list/model/main_page_model.dart';
 import 'package:todo_list/utils/theme_util.dart';
 import 'package:todo_list/widgets/net_loading_widget.dart';
 
 class GlobalModel extends ChangeNotifier {
-  GlobalLogic logic;
-  BuildContext context;
+  late GlobalLogic logic;
+  late BuildContext context;
+
   ///GlobalModel可以用来统一管理所有的model，这里只管理了一部分
-  MainPageModel mainPageModel;
-  SearchPageModel searchPageModel;
-  TaskDetailPageModel taskDetailPageModel;
+  late MainPageModel mainPageModel;
+  late SearchPageModel searchPageModel;
+  late TaskDetailPageModel? taskDetailPageModel;
 
   ///app的名字
   String appName = '一日';
@@ -28,8 +28,6 @@ class GlobalModel extends ChangeNotifier {
 
   ///是否开启主页背景渐变
   bool isBgGradient = false;
-
-
 
   ///是否开启主页背景颜色跟随卡片图标颜色
   bool isBgChangeWithCard = false;
@@ -62,7 +60,7 @@ class GlobalModel extends ChangeNotifier {
   String currentPosition = '';
 
   ///当前天气的json
-  WeatherBean weatherBean;
+  late WeatherBean weatherBean;
 
   ///设置页面，用于控制天气获取的loading加载框
   LoadingController loadingController = LoadingController();
@@ -70,7 +68,7 @@ class GlobalModel extends ChangeNotifier {
   ///当前语言
   List<String> currentLanguageCode = ['zh', 'CN'];
   String currentLanguage = '中文';
-  Locale currentLocale;
+  late Locale currentLocale;
 
   ///当前导航栏头部背景
   String currentNavHeader = NavHeadType.meteorShower;
@@ -79,7 +77,7 @@ class GlobalModel extends ChangeNotifier {
   String currentNetPicUrl = "";
 
   ///是否进入登录页
-  bool goToLogin;
+  bool goToLogin = true;
 
   GlobalModel() {
     logic = GlobalLogic(this);
@@ -122,15 +120,15 @@ class GlobalModel extends ChangeNotifier {
     }
   }
 
-  void setSearchPageModel(SearchPageModel searchPageModel){
-    if (this.searchPageModel == null){
+  void setSearchPageModel(SearchPageModel searchPageModel) {
+    if (this.searchPageModel == null) {
       this.searchPageModel = searchPageModel;
       debugPrint("设置searchPageModel");
     }
   }
 
-  void setTaskDetailPageModel(TaskDetailPageModel taskDetailPageModel){
-    if(this.taskDetailPageModel == null){
+  void setTaskDetailPageModel(TaskDetailPageModel taskDetailPageModel) {
+    if (this.taskDetailPageModel == null) {
       this.taskDetailPageModel = taskDetailPageModel;
       debugPrint("设置taskDetailPageModel");
     }

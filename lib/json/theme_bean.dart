@@ -1,10 +1,11 @@
 import 'package:todo_list/json/color_bean.dart';
+
 export 'package:todo_list/json/color_bean.dart';
 
 class ThemeBean {
-  String themeName;
-  ColorBean colorBean;
-  String themeType;
+  late String? themeName;
+  late ColorBean? colorBean;
+  late String? themeType;
 
   ThemeBean({this.themeName, this.colorBean, this.themeType});
 
@@ -19,15 +20,13 @@ class ThemeBean {
   Map<dynamic, dynamic> toMap() {
     return {
       'themeName': themeName,
-      'colorBean': colorBean.toMap(),
+      'colorBean': colorBean?.toMap(),
       'themeType': themeType
     };
   }
 
   @override
   bool operator ==(other) {
-    return other.themeName == themeName;
+    return (other as ThemeBean).themeName == themeName;
   }
-
-
 }

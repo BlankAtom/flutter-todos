@@ -1,19 +1,18 @@
 import 'dart:convert';
-import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:todo_list/config/all_types.dart';
 import 'package:todo_list/config/api_service.dart';
 import 'package:todo_list/database/database.dart';
 import 'package:todo_list/i10n/localization_intl.dart';
 import 'package:todo_list/model/all_model.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:todo_list/pages/main/background/image_page.dart';
 import 'package:todo_list/pages/main/background/pictures_history_page.dart';
 import 'package:todo_list/utils/permission_request_util.dart';
 import 'package:todo_list/utils/shared_util.dart';
-
 
 class NetPicturesPageLogic {
   final NetPicturesPageModel _model;
@@ -23,14 +22,14 @@ class NetPicturesPageLogic {
   void getPhotos({
     int page = 1,
     int perPage = 30,
-    CancelToken cancelToken,
+    required CancelToken cancelToken,
   }) {
     ApiService.instance.getPhotos(
-        success: (beans,data) {
+        success: (beans, data) {
           List<PhotoBean> datas = beans;
           if (datas.length == 0) {
             _model.loadingFlag = LoadingFlag.empty;
-            _model.refreshController.footerMode.value = LoadStatus.noMore;
+            _model.refreshController.footerMode?.value = LoadStatus.noMore;
           } else {
             _model.loadingFlag = LoadingFlag.success;
             _model.photos.addAll(datas);
@@ -76,7 +75,7 @@ class NetPicturesPageLogic {
     );
   }
 
-  Widget getRefreshFooter(BuildContext context, LoadStatus mode) {
+  Widget getRefreshFooter(BuildContext context, LoadStatus? mode) {
     Widget body;
     if (mode == LoadStatus.idle) {
       body = Text(IntlLocalizations.of(context).pullUpToLoadMore);
@@ -107,52 +106,51 @@ class NetPicturesPageLogic {
   void onPictureTap(List<String> urls, int index, GlobalModel globalModel) {
     Navigator.of(_model.context).push(new CupertinoPageRoute(builder: (ctx) {
       return ImagePage(
-          imageUrls: urls,
-          initialPageIndex: index,
-          onSelect: (current) {
-            final currentUrl = _model.photos[current].urls.regular;
+        imageUrls: urls,
+        initialPageIndex: index,
+        onSelect: (current) {
+          final currentUrl = _model.photos[current].urls.regular;
 
-            switch (_model.useType) {
-              case NetPicturesUseType.accountBackground:
-                SharedUtil.instance
-                    .saveString(Keys.currentAccountBackground, currentUrl);
-                SharedUtil.instance.saveString(
-                    Keys.currentAccountBackgroundType,
-                    AccountBGType.netPicture);
-                final accountPageModel = _model.accountPageModel;
-                accountPageModel.backgroundUrl = currentUrl;
-                accountPageModel.backgroundType = AccountBGType.netPicture;
-                accountPageModel.refresh();
-                break;
-              case NetPicturesUseType.navigatorHeader:
-                SharedUtil.instance
-                    .saveString(Keys.currentNetPicUrl, currentUrl);
-                SharedUtil.instance
-                    .saveString(Keys.currentNavHeader, _model.useType);
-                globalModel.currentNetPicUrl = currentUrl;
-                globalModel.currentNavHeader = _model.useType;
-                globalModel.refresh();
-                break;
-              case NetPicturesUseType.taskCardBackground:
-                _model.taskBean?.backgroundUrl = currentUrl;
-                DBProvider.db.updateTask(_model.taskBean);
-                final searchModel = globalModel.searchPageModel;
-                searchModel?.refresh();
-                final mainPageModel = globalModel.mainPageModel;
-                mainPageModel?.refresh();
-                break;
-              default:
-                SharedUtil.instance
-                    .saveString(Keys.currentMainPageBackgroundUrl, currentUrl);
-                SharedUtil.instance
-                    .saveBoolean(Keys.enableNetPicBgInMainPage, true);
-                globalModel.currentMainPageBgUrl = currentUrl;
-                globalModel.enableNetPicBgInMainPage = true;
-                globalModel.refresh();
-                break;
-            }
-            Navigator.of(_model.context).pop();
-          },);
+          switch (_model.useType) {
+            case NetPicturesUseType.accountBackground:
+              SharedUtil.instance
+                  .saveString(Keys.currentAccountBackground, currentUrl);
+              SharedUtil.instance.saveString(
+                  Keys.currentAccountBackgroundType, AccountBGType.netPicture);
+              final accountPageModel = _model.accountPageModel;
+              accountPageModel?.backgroundUrl = currentUrl;
+              accountPageModel?.backgroundType = AccountBGType.netPicture;
+              accountPageModel?.refresh();
+              break;
+            case NetPicturesUseType.navigatorHeader:
+              SharedUtil.instance.saveString(Keys.currentNetPicUrl, currentUrl);
+              SharedUtil.instance
+                  .saveString(Keys.currentNavHeader, _model.useType);
+              globalModel.currentNetPicUrl = currentUrl;
+              globalModel.currentNavHeader = _model.useType;
+              globalModel.refresh();
+              break;
+            case NetPicturesUseType.taskCardBackground:
+              _model.taskBean?.backgroundUrl = currentUrl;
+              DBProvider.db.updateTask(_model.taskBean!);
+              final searchModel = globalModel.searchPageModel;
+              searchModel.refresh();
+              final mainPageModel = globalModel.mainPageModel;
+              mainPageModel.refresh();
+              break;
+            default:
+              SharedUtil.instance
+                  .saveString(Keys.currentMainPageBackgroundUrl, currentUrl);
+              SharedUtil.instance
+                  .saveBoolean(Keys.enableNetPicBgInMainPage, true);
+              globalModel.currentMainPageBgUrl = currentUrl;
+              globalModel.enableNetPicBgInMainPage = true;
+              globalModel.refresh();
+              break;
+          }
+          Navigator.of(_model.context).pop();
+        },
+      );
     }));
   }
 
@@ -162,11 +160,12 @@ class NetPicturesPageLogic {
         useType: _model.useType,
         taskBean: _model.taskBean,
         accountPageModel: _model.accountPageModel,
+        key: GlobalKey(),
       );
     }));
   }
 
-  void onLocalImagePick(){
+  void onLocalImagePick() {
     final context = _model.context;
     PermissionReqUtil.getInstance().requestPermission(
       Permission.photos,
@@ -180,8 +179,9 @@ class NetPicturesPageLogic {
   Future getImage() async {
     final context = _model.context;
     final globalModel = _model.globalModel;
-    XFile imageFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if(imageFile == null) return;
+    XFile? imageFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (imageFile == null) return;
     final currentUrl = imageFile.path;
     switch (_model.useType) {
       case NetPicturesUseType.accountBackground:
@@ -190,9 +190,9 @@ class NetPicturesPageLogic {
         SharedUtil.instance.saveString(
             Keys.currentAccountBackgroundType, AccountBGType.netPicture);
         final accountPageModel = _model.accountPageModel;
-        accountPageModel.backgroundUrl = currentUrl;
-        accountPageModel.backgroundType = AccountBGType.netPicture;
-        accountPageModel.refresh();
+        accountPageModel?.backgroundUrl = currentUrl;
+        accountPageModel?.backgroundType = AccountBGType.netPicture;
+        accountPageModel?.refresh();
         break;
       case NetPicturesUseType.navigatorHeader:
         SharedUtil.instance.saveString(Keys.currentNetPicUrl, currentUrl);
@@ -203,13 +203,13 @@ class NetPicturesPageLogic {
         break;
       case NetPicturesUseType.taskCardBackground:
         _model.taskBean?.backgroundUrl = currentUrl;
-        DBProvider.db.updateTask(_model.taskBean);
+        DBProvider.db.updateTask(_model.taskBean!);
         final searchModel = globalModel.searchPageModel;
-        searchModel?.refresh();
+        searchModel.refresh();
         final taskDetailPageModel = globalModel.taskDetailPageModel;
         taskDetailPageModel?.refresh();
         final mainPageModel = globalModel.mainPageModel;
-        mainPageModel?.refresh();
+        mainPageModel.refresh();
         break;
       default:
         SharedUtil.instance
@@ -223,12 +223,11 @@ class NetPicturesPageLogic {
     Navigator.of(context).pop();
   }
 
-  void onPopItemSelect(PopItemType value){
-    if(value == PopItemType.history){
+  void onPopItemSelect(PopItemType value) {
+    if (value == PopItemType.history) {
       onHistoryTap();
     } else {
       onLocalImagePick();
     }
   }
-
 }

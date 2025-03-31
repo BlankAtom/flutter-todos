@@ -6,12 +6,13 @@ import 'package:todo_list/json/theme_bean.dart';
 import 'package:todo_list/utils/shared_util.dart';
 
 class ThemeUtil {
-  static ThemeUtil _instance;
+  static ThemeUtil _instance = ThemeUtil._internal();
+
+  factory ThemeUtil() {
+    return _instance;
+  }
 
   static ThemeUtil getInstance() {
-    if (_instance == null) {
-      _instance = ThemeUtil._internal();
-    }
     return _instance;
   }
 
@@ -21,14 +22,14 @@ class ThemeUtil {
     ThemeBean themeBean,
   ) {
     return _getThemeData(
-        ColorBean.fromBean(themeBean.colorBean), themeBean.themeType);
+        ColorBean.fromBean(themeBean.colorBean!), themeBean.themeType!);
   }
 
   ThemeData _getThemeData(Color color, String themeType) {
     if (themeType == MyTheme.darkTheme) {
       return ThemeData(
         brightness: Brightness.dark,
-        appBarTheme: getAppBarTheme(Colors.grey[800], Colors.grey),
+        appBarTheme: getAppBarTheme(Colors.grey.shade800, Colors.grey),
         scaffoldBackgroundColor: Colors.grey[800],
       );
     }
@@ -62,9 +63,7 @@ class ThemeUtil {
       iconTheme: IconThemeData(color: iconColor),
       color: bgColor,
       elevation: 0.0,
-      textTheme: TextTheme(
-        subtitle1: TextStyle(color: iconColor, fontSize: 20),
-      ),
+      titleTextStyle: TextStyle(color: iconColor, fontSize: 20),
     );
   }
 

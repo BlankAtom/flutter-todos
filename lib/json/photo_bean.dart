@@ -1,5 +1,4 @@
 class PhotoBean {
-
   /*
    * id : "aH8tRjQG4XM"
    * created_at : "2019-07-18T06:20:04-04:00"
@@ -15,17 +14,17 @@ class PhotoBean {
    * user : {"id":"hHQGJB9ZejE","updated_at":"2019-07-18T07:57:50-04:00","username":"rotaalternativa","name":"Rota Alternativa","first_name":"Rota","last_name":"Alternativa","twitter_username":null,"portfolio_url":"https://www.instagram.com/rotaalternativarv/","bio":"We are exploring the nomad and simple life the road has to offer. Living in our 1992 Fiat Talento motorhome.","location":null,"links":{"self":"https://api.unsplash.com/users/rotaalternativa","html":"https://unsplash.com/@rotaalternativa","photos":"https://api.unsplash.com/users/rotaalternativa/photos","likes":"https://api.unsplash.com/users/rotaalternativa/likes","portfolio":"https://api.unsplash.com/users/rotaalternativa/portfolio","following":"https://api.unsplash.com/users/rotaalternativa/following","followers":"https://api.unsplash.com/users/rotaalternativa/followers"},"profile_image":{"small":"https://images.unsplash.com/profile-1550700203074-81551f41d6fe?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&cs=tinysrgb&fit=crop&h=32&w=32","medium":"https://images.unsplash.com/profile-1550700203074-81551f41d6fe?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&cs=tinysrgb&fit=crop&h=64&w=64","large":"https://images.unsplash.com/profile-1550700203074-81551f41d6fe?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&cs=tinysrgb&fit=crop&h=128&w=128"},"instagram_username":"rotaalternativarv","total_collections":0,"total_likes":1,"total_photos":72,"accepted_tos":true}
    */
 
-  String id;
-  String createdAt;
-  String updatedAt;
-  String color;
-  bool sponsored;
-  bool likedByUser;
-  int width;
-  int height;
-  int likes;
-  LinksBean links;
-  UrlsBean urls;
+  late String id;
+  late String createdAt;
+  late String updatedAt;
+  late String color;
+  late bool sponsored;
+  late bool likedByUser;
+  late int width;
+  late int height;
+  late int likes;
+  late LinksBean links;
+  late UrlsBean urls;
 
   static PhotoBean fromMap(Map<String, dynamic> map) {
     PhotoBean photoBean = new PhotoBean();
@@ -43,34 +42,32 @@ class PhotoBean {
     return photoBean;
   }
 
-   Map<String, dynamic> tpMap(){
+  Map<String, dynamic> tpMap() {
     return {
-      'id':id,
-      'created_at':createdAt,
-      'updated_at':updatedAt,
-      'color':color,
-      'sponsored':sponsored,
-      'liked_by_user':likedByUser,
-      'width':width,
-      'height':height,
-      'likes':likes,
-      'links':links.toMap(),
-      'urls':urls.toMap()
+      'id': id,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+      'color': color,
+      'sponsored': sponsored,
+      'liked_by_user': likedByUser,
+      'width': width,
+      'height': height,
+      'likes': likes,
+      'links': links.toMap(),
+      'urls': urls.toMap()
     };
   }
 
   static List<PhotoBean> fromMapList(dynamic mapList) {
-    List<PhotoBean> list = List.filled(mapList.length, null);
+    List<PhotoBean> list = List.filled(mapList.length, PhotoBean());
     for (int i = 0; i < mapList.length; i++) {
       list[i] = fromMap(mapList[i]);
     }
     return list;
   }
-
 }
 
 class LinksBean {
-
   /*
    * self : "https://api.unsplash.com/users/rotaalternativa"
    * html : "https://unsplash.com/@rotaalternativa"
@@ -81,13 +78,13 @@ class LinksBean {
    * followers : "https://api.unsplash.com/users/rotaalternativa/followers"
    */
 
-  String self;
-  String html;
-  String photos;
-  String likes;
-  String portfolio;
-  String following;
-  String followers;
+  late String self;
+  late String html;
+  late String photos;
+  late String likes;
+  late String portfolio;
+  late String following;
+  late String followers;
 
   static LinksBean fromMap(Map<String, dynamic> map) {
     LinksBean linksBean = new LinksBean();
@@ -102,28 +99,27 @@ class LinksBean {
   }
 
   static List<LinksBean> fromMapList(dynamic mapList) {
-    List<LinksBean> list = List.filled(mapList.length, null);
+    List<LinksBean> list = List.filled(mapList.length, LinksBean());
     for (int i = 0; i < mapList.length; i++) {
       list[i] = fromMap(mapList[i]);
     }
     return list;
   }
 
-  Map<String, dynamic> toMap(){
+  Map<String, dynamic> toMap() {
     return {
-      'self':self,
-      'html':html,
-      'photos':photos,
-      'likes':likes,
-      'portfolio':portfolio,
-      'following':following,
-      'followers':followers
+      'self': self,
+      'html': html,
+      'photos': photos,
+      'likes': likes,
+      'portfolio': portfolio,
+      'following': following,
+      'followers': followers
     };
   }
 }
 
 class UrlsBean {
-
   /*
    * raw : "https://images.unsplash.com/photo-1563445192071-fb5b2fa4ad62?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjgxNjY3fQ"
    * full : "https://images.unsplash.com/photo-1563445192071-fb5b2fa4ad62?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&ixid=eyJhcHBfaWQiOjgxNjY3fQ"
@@ -132,11 +128,11 @@ class UrlsBean {
    * thumb : "https://images.unsplash.com/photo-1563445192071-fb5b2fa4ad62?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&ixid=eyJhcHBfaWQiOjgxNjY3fQ"
    */
 
-  String raw;
-  String full;
-  String regular;
-  String small;
-  String thumb;
+  late String raw;
+  late String full;
+  late String regular;
+  late String small;
+  late String thumb;
 
   static UrlsBean fromMap(Map<String, dynamic> map) {
     UrlsBean urlsBean = new UrlsBean();
@@ -149,27 +145,25 @@ class UrlsBean {
   }
 
   static List<UrlsBean> fromMapList(dynamic mapList) {
-    List<UrlsBean> list = List.filled(mapList.length, null);
+    List<UrlsBean> list = List.filled(mapList.length, UrlsBean());
     for (int i = 0; i < mapList.length; i++) {
       list[i] = fromMap(mapList[i]);
     }
     return list;
   }
 
-
-  Map<String, dynamic> toMap(){
+  Map<String, dynamic> toMap() {
     return {
-      'raw':raw,
-      'full':full,
-      'regular':regular,
-      'small':small,
-      'thumb':thumb
+      'raw': raw,
+      'full': full,
+      'regular': regular,
+      'small': small,
+      'thumb': thumb
     };
   }
 }
 
 class UserBean {
-
   /*
    * id : "hHQGJB9ZejE"
    * updated_at : "2019-07-18T07:57:50-04:00"
@@ -188,21 +182,21 @@ class UserBean {
    * profile_image : {"small":"https://images.unsplash.com/profile-1550700203074-81551f41d6fe?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&cs=tinysrgb&fit=crop&h=32&w=32","medium":"https://images.unsplash.com/profile-1550700203074-81551f41d6fe?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&cs=tinysrgb&fit=crop&h=64&w=64","large":"https://images.unsplash.com/profile-1550700203074-81551f41d6fe?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&cs=tinysrgb&fit=crop&h=128&w=128"}
    */
 
-  String id;
-  String updatedAt;
-  String username;
-  String name;
-  String firstName;
-  String lastName;
-  String portfolioUrl;
-  String bio;
-  String instagramUsername;
-  bool acceptedTos;
-  int totalCollections;
-  int totalLikes;
-  int totalPhotos;
-  LinksBean links;
-  ProfileImageBean profileImage;
+  late String id;
+  late String updatedAt;
+  late String username;
+  late String name;
+  late String firstName;
+  late String lastName;
+  late String portfolioUrl;
+  late String bio;
+  late String instagramUsername;
+  late bool acceptedTos;
+  late int totalCollections;
+  late int totalLikes;
+  late int totalPhotos;
+  late LinksBean links;
+  late ProfileImageBean profileImage;
 
   static UserBean fromMap(Map<String, dynamic> map) {
     UserBean userBean = new UserBean();
@@ -225,7 +219,7 @@ class UserBean {
   }
 
   static List<UserBean> fromMapList(dynamic mapList) {
-    List<UserBean> list = List.filled(mapList.length, null);
+    List<UserBean> list = List.filled(mapList.length, UserBean());
     for (int i = 0; i < mapList.length; i++) {
       list[i] = fromMap(mapList[i]);
     }
@@ -234,16 +228,15 @@ class UserBean {
 }
 
 class ProfileImageBean {
-
   /*
    * small : "https://images.unsplash.com/profile-1550700203074-81551f41d6fe?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&cs=tinysrgb&fit=crop&h=32&w=32"
    * medium : "https://images.unsplash.com/profile-1550700203074-81551f41d6fe?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&cs=tinysrgb&fit=crop&h=64&w=64"
    * large : "https://images.unsplash.com/profile-1550700203074-81551f41d6fe?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&cs=tinysrgb&fit=crop&h=128&w=128"
    */
 
-  String small;
-  String medium;
-  String large;
+  late String small;
+  late String medium;
+  late String large;
 
   static ProfileImageBean fromMap(Map<String, dynamic> map) {
     ProfileImageBean profileImageBean = new ProfileImageBean();
@@ -254,7 +247,8 @@ class ProfileImageBean {
   }
 
   static List<ProfileImageBean> fromMapList(dynamic mapList) {
-    List<ProfileImageBean> list = List.filled(mapList.length, null);
+    List<ProfileImageBean> list =
+        List.filled(mapList.length, ProfileImageBean());
     for (int i = 0; i < mapList.length; i++) {
       list[i] = fromMap(mapList[i]);
     }

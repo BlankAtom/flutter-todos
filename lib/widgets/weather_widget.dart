@@ -1,32 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list/config/api_service.dart';
-import 'package:todo_list/json/weather_bean.dart';
 import 'package:todo_list/model/global_model.dart';
 import 'package:todo_list/utils/shared_util.dart';
 
 import 'loading_widget.dart';
 
-
 class WeatherWidget extends StatefulWidget {
+  final GlobalModel? globalModel;
 
-  final GlobalModel globalModel;
-
-  const WeatherWidget({Key key, this.globalModel}) : super(key: key);
+  const WeatherWidget({required Key key, this.globalModel}) : super(key: key);
 
   @override
   _WeatherWidgetState createState() => _WeatherWidgetState();
 }
 
 class _WeatherWidgetState extends State<WeatherWidget> {
-
   LoadingFlag loadingFlag = LoadingFlag.loading;
-  CancelToken cancelToken;
+  late CancelToken cancelToken;
 
   @override
   void initState() {
     cancelToken = CancelToken();
-    if(widget.globalModel.weatherBean == null){
-      getWeatherNow(widget.globalModel);
+    if (widget.globalModel!.weatherBean == null) {
+      getWeatherNow(widget.globalModel!);
     }
     super.initState();
   }
@@ -40,7 +36,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
   @override
   Widget build(BuildContext context) {
     final globalModel = widget.globalModel;
-    final color = globalModel.logic.isDarkNow() ? Colors.white : Colors.grey;
+    final color = globalModel!.logic.isDarkNow() ? Colors.white : Colors.grey;
     final WeatherBean weatherBean = globalModel.weatherBean;
     if (globalModel.weatherBean == null) {
       return Padding(
@@ -48,7 +44,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
         child: LoadingWidget(
           size: 80,
           flag: loadingFlag,
-          errorCallBack: (){
+          errorCallBack: () {
             setState(() {
               loadingFlag = LoadingFlag.loading;
             });
@@ -108,29 +104,33 @@ class _WeatherWidgetState extends State<WeatherWidget> {
     );
   }
 
-
   void getWeatherNow(GlobalModel globalModel) {
     final position = globalModel.currentPosition;
     final languageCode = globalModel.currentLocale.languageCode;
-    ApiService.instance.getWeatherNow( success : (WeatherBean weatherBean) {
-      globalModel.weatherBean = weatherBean;
-      SharedUtil.instance.saveString(Keys.currentPosition, position);
-      SharedUtil.instance.saveBoolean(Keys.enableWeatherShow, true);
-      setState(() {
-        loadingFlag = LoadingFlag.success;
-      });
-    },failed: (WeatherBean weatherBean) {
-      setState(() {
-        loadingFlag = LoadingFlag.error;
-      });
-    },error: (error) {
-      setState(() {
-        loadingFlag = LoadingFlag.error;
-      });
-    },params: {
-      "key": "d381a4276ed349daa3bf63646f12d8ae",
-      "location": position,
-      "lang": languageCode
-    },token: CancelToken());
+    ApiService.instance.getWeatherNow(
+        success: (WeatherBean weatherBean) {
+          globalModel.weatherBean = weatherBean;
+          SharedUtil.instance.saveString(Keys.currentPosition, position);
+          SharedUtil.instance.saveBoolean(Keys.enableWeatherShow, true);
+          setState(() {
+            loadingFlag = LoadingFlag.success;
+          });
+        },
+        failed: (WeatherBean weatherBean) {
+          setState(() {
+            loadingFlag = LoadingFlag.error;
+          });
+        },
+        error: (error) {
+          setState(() {
+            loadingFlag = LoadingFlag.error;
+          });
+        },
+        params: {
+          "key": "d381a4276ed349daa3bf63646f12d8ae",
+          "location": position,
+          "lang": languageCode
+        },
+        token: CancelToken());
   }
 }

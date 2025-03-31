@@ -2,17 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:todo_list/config/api_service.dart';
-import 'package:todo_list/config/api_strategy.dart';
-import 'package:todo_list/i10n/localization_intl.dart';
-import 'package:todo_list/json/upload_avatar_bean.dart';
-import 'package:todo_list/model/all_model.dart';
 import 'package:image_crop/image_crop.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:todo_list/config/api_service.dart';
+import 'package:todo_list/i10n/localization_intl.dart';
+import 'package:todo_list/model/all_model.dart';
 import 'package:todo_list/pages/main/avatar_history_page.dart';
 import 'package:todo_list/utils/file_util.dart';
 import 'package:todo_list/utils/permission_request_util.dart';
 import 'package:todo_list/utils/shared_util.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:todo_list/widgets/net_loading_widget.dart';
 
 class AvatarPageLogic {
@@ -27,9 +25,9 @@ class AvatarPageLogic {
         PermissionReqUtil.getInstance().requestPermission(
           Permission.photos,
           granted: getImage,
-          deniedDes: IntlLocalizations.of(context).deniedDes,
+          deniedDes: IntlLocalizations.of(context)!.deniedDes,
           context: context,
-          openSetting: IntlLocalizations.of(context).openSystemSetting,
+          openSetting: IntlLocalizations.of(context)!.openSystemSetting,
         );
         break;
       case AvatarType.history:
@@ -46,7 +44,7 @@ class AvatarPageLogic {
   Future getImage() async {
     final context = _model.context;
 
-    XFile image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    XFile? image = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image != null) {
       if (Platform.isAndroid) {
         PermissionReqUtil.getInstance().requestPermission(
@@ -54,9 +52,9 @@ class AvatarPageLogic {
           granted: () {
             _saveAndGetAvatarFile(image);
           },
-          deniedDes: IntlLocalizations.of(context).deniedDes,
+          deniedDes: IntlLocalizations.of(context)!.deniedDes,
           context: context,
-          openSetting: IntlLocalizations.of(context).openSystemSetting,
+          openSetting: IntlLocalizations.of(context)!.openSystemSetting,
         );
         return;
       }
@@ -73,7 +71,7 @@ class AvatarPageLogic {
   void onSaveTap() async {
     final croppedFile = await ImageCrop.cropImage(
       file: File(_model.currentAvatarUrl),
-      area: _model.cropKey.currentState.area,
+      area: _model.cropKey.currentState?.area ?? Rect.zero,
     );
     await _saveImage(croppedFile);
   }
@@ -84,9 +82,9 @@ class AvatarPageLogic {
     File newFile = file.copySync(newPath + name);
     if (newFile.existsSync()) {
       final account = await SharedUtil.instance.getString(Keys.account);
-      if(account == "default" || account == null){
+      if (account == "default" || account == null) {
         await _saveImageData(newFile.path);
-      } else{
+      } else {
         final token = await SharedUtil.instance.getString(Keys.token);
         final path = newFile.path;
         String fileName = path
@@ -94,21 +92,23 @@ class AvatarPageLogic {
             .replaceAll(" ", "");
         String transFormName = Uri.encodeFull(fileName).replaceAll("%", "");
 
-        uploadAvatar(account,token, path, transFormName);
+        uploadAvatar(account, token ?? 'None Token', path, transFormName);
       }
     }
   }
 
   Future _saveImageData(String filePath) async {
-    await SharedUtil.instance.saveString(Keys.localAvatarPath,filePath);
-    await SharedUtil.instance.saveInt(Keys.currentAvatarType, CurrentAvatarType.local);
+    await SharedUtil.instance.saveString(Keys.localAvatarPath, filePath);
+    await SharedUtil.instance
+        .saveInt(Keys.currentAvatarType, CurrentAvatarType.local);
     _model.mainPageModel.currentAvatarType = CurrentAvatarType.local;
     _model.mainPageModel.currentAvatarUrl = filePath;
     _model.mainPageModel.refresh();
     Navigator.of(_model.context).pop();
   }
 
-  void uploadAvatar(String account, String token, String filePath, String fileName) async{
+  void uploadAvatar(
+      String account, String token, String filePath, String fileName) async {
     final context = _model.context;
     _showLoadingDialog(context);
     ApiService.instance.uploadAvatar(
@@ -117,15 +117,15 @@ class AvatarPageLogic {
         "account": account,
         "token": token
       }),
-      success: (UploadAvatarBean bean){
+      success: (UploadAvatarBean bean) {
         Navigator.pop(context);
         _saveImageData(filePath);
       },
-      failed: (UploadAvatarBean bean){
+      failed: (UploadAvatarBean bean) {
         Navigator.pop(context);
         _showTextDialog(bean.description);
       },
-      error: (msg){
+      error: (msg) {
         Navigator.pop(context);
         _showTextDialog(msg);
       },
@@ -134,22 +134,24 @@ class AvatarPageLogic {
   }
 
   void _showLoadingDialog(BuildContext context) {
-    showDialog(context: context, builder: (ctx){
-      return NetLoadingWidget();
-    });
+    showDialog(
+        context: context,
+        builder: (ctx) {
+          return NetLoadingWidget(
+            key: GlobalKey(),
+          );
+        });
   }
 
-  void _showTextDialog(String text){
+  void _showTextDialog(String text) {
     final context = _model.context;
     showDialog(
         context: context,
         builder: (ctx) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-                borderRadius:
-                BorderRadius.all(Radius.circular(20.0))),
-            content: Text(
-                text),
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            content: Text(text),
           );
         });
   }

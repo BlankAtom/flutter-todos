@@ -1,20 +1,21 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:todo_list/widgets/loading_widget.dart';
-import 'dart:io';
 
 class WebViewPage extends StatefulWidget {
   final String url;
   final String title;
 
-  WebViewPage(this.url, {this.title});
+  WebViewPage(this.url, {required this.title});
 
   @override
   _WebViewPageState createState() => _WebViewPageState();
 }
 
 class _WebViewPageState extends State<WebViewPage> {
-  FlutterWebviewPlugin flutterWebviewPlugin;
+  late FlutterWebviewPlugin flutterWebviewPlugin;
   LoadingFlag loadingFlag = LoadingFlag.loading;
 
   @override

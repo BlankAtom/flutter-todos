@@ -22,14 +22,14 @@ class ResetPasswordPageLogic {
       _model.verifyCode = verifyCode;
       _model.isVerifyCodeOk = true;
       _model.refresh();
-      return null;
+      return 'Access';
     }
   }
 
   String validatorEmail(String email) {
     final context = _model.context;
     _model.isEmailOk = false;
-    Pattern pattern =
+    final pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = new RegExp(pattern);
     if (email.isEmpty)
@@ -40,7 +40,7 @@ class ResetPasswordPageLogic {
       _model.isEmailOk = true;
       _model.emailAccount = email;
       _model.refresh();
-      return null;
+      return 'Access';
     }
   }
 
@@ -57,7 +57,7 @@ class ResetPasswordPageLogic {
       _model.rePassword = rePassword;
       _model.isRePasswordOk = true;
       _model.refresh();
-      return null;
+      return 'Access';
     }
   }
 
@@ -74,7 +74,7 @@ class ResetPasswordPageLogic {
       _model.newPassword = password;
       _model.isNewPasswordOk = true;
       _model.refresh();
-      return null;
+      return 'Access';
     }
   }
 
@@ -91,24 +91,24 @@ class ResetPasswordPageLogic {
       _model.oldPassword = password;
       _model.isOldPasswordOk = true;
       _model.refresh();
-      return null;
+      return 'Access';
     }
   }
 
-  void _validate(){
-    bool b1 = _model.emailKey?.currentState?.validate();
-    bool b2 = _model.oldPasswordKey?.currentState?.validate();
-    bool b3 = _model.rePasswordKey?.currentState?.validate();
-    bool b4 = _model.passwordKey?.currentState?.validate();
-    bool b5 = _model.verifyCodeKey?.currentState?.validate();
+  void _validate() {
+    bool b1 = _model.emailKey?.currentState?.validate() ?? false;
+    bool b2 = _model.oldPasswordKey?.currentState?.validate() ?? false;
+    bool b3 = _model.rePasswordKey?.currentState?.validate() ?? false;
+    bool b4 = _model.passwordKey?.currentState?.validate() ?? false;
+    bool b5 = _model.verifyCodeKey?.currentState?.validate() ?? false;
     debugPrint("$b1 - $b2 - $b3 - $b4 - $b5");
   }
-
 
   void onSubmit() {
     final model = _model;
     final context = _model.context;
     _validate();
+
     ///如果是重新设置密码
     if (model.isReset) {
       if (!model.isOldPasswordOk ||
@@ -117,21 +117,24 @@ class ResetPasswordPageLogic {
         _showTextDialog(IntlLocalizations.of(context).wrongParams, context);
         return;
       }
-      showDialog(context: context, builder: (ctx){
-        return NetLoadingWidget(
-          onRequest: (){
-            _onResetPasswordRequest();
-          },
-          successText: IntlLocalizations.of(context).resetPasswordSuccess,
-          errorText: IntlLocalizations.of(context).resetPasswordFailed,
-          loadingController: _model.loadingController,
-          onSuccess: (){
-            Navigator.of(_model.context).popUntil((route) => route.isFirst);
-          },
-
-        );
-      });
+      showDialog(
+          context: context,
+          builder: (ctx) {
+            return NetLoadingWidget(
+              onRequest: () {
+                _onResetPasswordRequest();
+              },
+              successText: IntlLocalizations.of(context).resetPasswordSuccess,
+              errorText: IntlLocalizations.of(context).resetPasswordFailed,
+              loadingController: _model.loadingController,
+              onSuccess: () {
+                Navigator.of(_model.context).popUntil((route) => route.isFirst);
+              },
+              key: GlobalKey(),
+            );
+          });
     }
+
     ///如果是忘记密码
     else {
       if (!model.isEmailOk ||
@@ -141,20 +144,23 @@ class ResetPasswordPageLogic {
         _showTextDialog(IntlLocalizations.of(context).wrongParams, context);
         return;
       }
-      showDialog(context: context, builder: (ctx){
-        return NetLoadingWidget(
-          onRequest: (){
-            _onForgetPasswordRequest();
-          },
-          successText: IntlLocalizations.of(context).resetPasswordSuccess,
-          errorText: IntlLocalizations.of(context).resetPasswordFailed,
-          loadingController: _model.loadingController,
-          onSuccess: (){
-            Navigator.of(_model.context).pop();
-            Navigator.of(_model.context).pop();
-          },
-        );
-      });
+      showDialog(
+          context: context,
+          builder: (ctx) {
+            return NetLoadingWidget(
+              onRequest: () {
+                _onForgetPasswordRequest();
+              },
+              successText: IntlLocalizations.of(context).resetPasswordSuccess,
+              errorText: IntlLocalizations.of(context).resetPasswordFailed,
+              loadingController: _model.loadingController,
+              onSuccess: () {
+                Navigator.of(_model.context).pop();
+                Navigator.of(_model.context).pop();
+              },
+              key: GlobalKey(),
+            );
+          });
     }
   }
 
@@ -184,8 +190,8 @@ class ResetPasswordPageLogic {
     final encryptConfirmPW = EncryptUtil.instance.encrypt(confirmPassword);
     ApiService.instance.postResetPassword(
       params: {
-        "account": account,
-        "token": token,
+        "account": account ?? 'None Account',
+        "token": token ?? 'None Token',
         "oldPassword": encryptOldPW,
         "newPassword": encryptNewPW,
         "confirmPassword": encryptConfirmPW,

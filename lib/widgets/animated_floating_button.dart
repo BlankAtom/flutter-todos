@@ -1,16 +1,16 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:todo_list/config/floating_border.dart';
 import 'package:todo_list/utils/full_screen_dialog_util.dart';
 import 'package:todo_list/utils/icon_list_util.dart';
 import 'package:todo_list/widgets/bottom_show_widget.dart';
-import 'package:todo_list/config/floating_border.dart';
 
 class AnimatedFloatingButton extends StatefulWidget {
+  final Color? bgColor;
 
-  final Color bgColor;
-
-  const AnimatedFloatingButton({Key key, this.bgColor}) : super(key: key);
+  const AnimatedFloatingButton({required Key key, this.bgColor})
+      : super(key: key);
 
   @override
   _AnimatedFloatingButtonState createState() => _AnimatedFloatingButtonState();
@@ -18,8 +18,8 @@ class AnimatedFloatingButton extends StatefulWidget {
 
 class _AnimatedFloatingButtonState extends State<AnimatedFloatingButton>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation _animation;
+  late AnimationController _controller;
+  late Animation _animation;
 
   @override
   void initState() {
@@ -43,7 +43,8 @@ class _AnimatedFloatingButtonState extends State<AnimatedFloatingButton>
       builder: (ctx, child) {
         return Transform.translate(
           offset: Offset(0, (_animation.value) * 56),
-          child: Transform.scale(scale: 1 - _animation.value, child: child),
+          child: Transform.scale(
+              scale: (1 - _animation.value) as double, child: child),
         );
       },
       child: Transform.rotate(

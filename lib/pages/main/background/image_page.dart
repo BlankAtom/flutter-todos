@@ -1,35 +1,34 @@
+import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:todo_list/config/all_types.dart';
 import 'package:todo_list/config/custom_image_cache_manager.dart';
 import 'package:todo_list/utils/shared_util.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:todo_list/widgets/loading_widget.dart';
-import 'dart:io';
 
 class ImagePage extends StatefulWidget {
   final List<String> imageUrls;
-  final int initialPageIndex;
-  final Function onSelect;
-  final String heroTag;
+  late int initialPageIndex;
+  late Function? onSelect;
+  late String? heroTag;
 
-  const ImagePage(
-      {Key key,
-      @required this.imageUrls,
-      this.initialPageIndex,
-      this.onSelect,
-      this.heroTag})
-      : super(key: key);
+  ImagePage({
+    required this.imageUrls,
+    this.onSelect,
+    this.heroTag,
+    this.initialPageIndex = 0,
+  });
 
   @override
   _ImagePageState createState() => _ImagePageState();
 }
 
 class _ImagePageState extends State<ImagePage> {
-  int currentPage;
-  PageController pageController;
+  int currentPage = 0;
+  PageController? pageController;
 
   @override
   void initState() {
@@ -65,7 +64,7 @@ class _ImagePageState extends State<ImagePage> {
                           .saveStringList(Keys.allHistoryNetPictureUrls, urls);
                     }
                     Navigator.pop(context);
-                    widget.onSelect(currentPage);
+                    if (widget.onSelect != null) widget.onSelect!(currentPage);
                   },
                 )
         ],
@@ -83,7 +82,8 @@ class _ImagePageState extends State<ImagePage> {
                           ? CustomCacheManager()
                           : null),
                   initialScale: PhotoViewComputedScale.contained,
-                  heroAttributes: PhotoViewHeroAttributes(tag: widget.heroTag ?? "tag_$index"),
+                  heroAttributes: PhotoViewHeroAttributes(
+                      tag: widget.heroTag ?? "tag_$index"),
                 );
               },
               itemCount: widget.imageUrls.length,
@@ -101,9 +101,9 @@ class _ImagePageState extends State<ImagePage> {
   }
 
   ImageProvider getProvider(String url) {
-    if(url.startsWith('http')){
+    if (url.startsWith('http')) {
       File file = File(url);
-      if(file.existsSync()) return FileImage(file);
+      if (file.existsSync()) return FileImage(file);
       return AssetImage('images/icon_2.png');
     }
 

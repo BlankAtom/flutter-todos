@@ -65,8 +65,8 @@ class FeedbackPage extends StatelessWidget {
               child: TextFormField(
                 expands: true,
                 maxLines: null,
-                  textInputAction: TextInputAction.newline,
-                onChanged: (text){
+                textInputAction: TextInputAction.newline,
+                onChanged: (text) {
                   model.feedbackContent = text;
                 },
                 style: TextStyle(
@@ -75,8 +75,7 @@ class FeedbackPage extends StatelessWidget {
                 decoration: InputDecoration(
                     contentPadding: EdgeInsets.all(10),
                     border: InputBorder.none,
-                    hintText:
-                        IntlLocalizations.of(context).writeYourFeedback,
+                    hintText: IntlLocalizations.of(context).writeYourFeedback,
                     hintStyle: TextStyle(color: Colors.grey)),
                 maxLength: 2000,
               ),
@@ -98,11 +97,11 @@ class FeedbackPage extends StatelessWidget {
                   expands: true,
                   maxLines: null,
                   validator: (text) {
-                    model.contactWay = text;
+                    model.contactWay = text!;
                     return null;
                   },
-                  style: TextStyle(
-                      color: isDarkNow ? Colors.grey : Colors.black),
+                  style:
+                      TextStyle(color: isDarkNow ? Colors.grey : Colors.black),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     prefixIcon: Icon(

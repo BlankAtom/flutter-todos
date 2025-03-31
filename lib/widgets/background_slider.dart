@@ -16,8 +16,8 @@ class BackgroundSlider extends StatefulWidget {
 
 class _BackgroundSliderState extends State<BackgroundSlider> {
 
-  double transparency;
-  bool enableTaskDetailOpacity;
+  late double transparency;
+  late bool enableTaskDetailOpacity;
 
   @override
   void initState() {

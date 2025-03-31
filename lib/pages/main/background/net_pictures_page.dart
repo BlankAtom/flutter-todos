@@ -1,20 +1,19 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:todo_list/config/all_types.dart';
 import 'package:todo_list/i10n/localization_intl.dart';
 import 'package:todo_list/model/global_model.dart';
 import 'package:todo_list/model/net_pictures_page_model.dart';
 import 'package:todo_list/widgets/custom_cache_image.dart';
 import 'package:todo_list/widgets/loading_widget.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class NetPicturesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final globalModel = Provider.of<GlobalModel>(context);
     final model = Provider.of<NetPicturesPageModel>(context)
-      ..setContext(context,globalModel);
+      ..setContext(context, globalModel);
 
     return Scaffold(
       appBar: AppBar(
@@ -54,7 +53,7 @@ class NetPicturesPage extends StatelessWidget {
                   enablePullUp: true,
                   onLoading: model.logic.loadMorePhoto,
                   footer: CustomFooter(
-                    builder: (BuildContext context, LoadStatus mode) =>
+                    builder: (context, mode) =>
                         model.logic.getRefreshFooter(context, mode),
                   ),
                   child: GridView.builder(
@@ -79,6 +78,7 @@ class NetPicturesPage extends StatelessWidget {
                             child: CustomCacheImage(
                               url: url,
                               fit: BoxFit.contain,
+                              key: GlobalKey(),
                             ),
                           ),
                         ),

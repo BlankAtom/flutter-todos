@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:todo_list/config/provider_config.dart';
-import 'package:todo_list/model/all_model.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_list/config/provider_config.dart';
+import 'package:todo_list/model/all_model.dart';
 import 'package:todo_list/pages/home/splash_page.dart';
 import 'package:todo_list/utils/theme_util.dart';
 
@@ -33,16 +33,16 @@ class MyApp extends StatelessWidget {
         const Locale('en', 'US'), // 美国英语
         const Locale('zh', 'CN'), // 中文简体
       ],
-      localeResolutionCallback:
-          (Locale locale, Iterable<Locale> supportedLocales) {
-        debugPrint("locale:$locale   sups:$supportedLocales  currentLocale:${model.currentLocale}");
+      localeResolutionCallback: (locale, supportedLocales) {
+        debugPrint(
+            "locale:$locale   sups:$supportedLocales  currentLocale:${model.currentLocale}");
         if (model.currentLocale == locale) return model.currentLocale;
         for (var supportedLocale in supportedLocales) {
           if (supportedLocale == locale) {
-            model.currentLocale = locale;
+            model.currentLocale = locale!;
             model.currentLanguageCode = [
               locale.languageCode,
-              locale.countryCode
+              locale.countryCode!
             ];
             locale.countryCode == "CN"
                 ? model.currentLanguage = "中文"
@@ -56,8 +56,7 @@ class MyApp extends StatelessWidget {
         }
         return model.currentLocale;
       },
-      localeListResolutionCallback:
-          (List<Locale> locales, Iterable<Locale> supportedLocales) {
+      localeListResolutionCallback: (locales, supportedLocales) {
         debugPrint("locatassss:$locales  sups:$supportedLocales");
         return model.currentLocale;
       },
@@ -67,11 +66,11 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  Widget getHomePage(bool goToLogin, bool enableSplashAnimation){
-    if(goToLogin == null) return Container();
-    if(enableSplashAnimation) return new SplashPage();
-    return goToLogin ? ProviderConfig.getInstance().getLoginPage(isFirst: true)
+  Widget getHomePage(bool goToLogin, bool enableSplashAnimation) {
+    if (goToLogin == null) return Container();
+    if (enableSplashAnimation) return new SplashPage();
+    return goToLogin
+        ? ProviderConfig.getInstance().getLoginPage(isFirst: true)
         : ProviderConfig.getInstance().getMainPage();
   }
-
 }

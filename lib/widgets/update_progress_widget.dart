@@ -2,18 +2,17 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
-import 'package:todo_list/widgets/update_dialog.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:todo_list/config/api_strategy.dart';
 import 'package:todo_list/utils/file_util.dart';
 import 'package:todo_list/utils/overlay_util.dart';
-import 'package:todo_list/config/api_strategy.dart';
+import 'package:todo_list/widgets/update_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UpdateProgressWidget extends StatefulWidget {
-
   final String updateUrl;
 
-  const UpdateProgressWidget({Key key,@required this.updateUrl}) : super(key: key);
-
+  const UpdateProgressWidget({required Key key, required this.updateUrl})
+      : super(key: key);
 
   @override
   _UpdateProgressWidgetState createState() => _UpdateProgressWidgetState();
@@ -21,13 +20,12 @@ class UpdateProgressWidget extends StatefulWidget {
 
 class _UpdateProgressWidgetState extends State<UpdateProgressWidget>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation<double> _animation;
-  CancelToken token;
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  late CancelToken token;
   int _downloadProgress = 0;
   bool isHide = false;
   UploadingFlag uploadingFlag = UploadingFlag.idle;
-
 
   @override
   void initState() {
@@ -73,7 +71,7 @@ class _UpdateProgressWidgetState extends State<UpdateProgressWidget>
                     child: Row(
                       children: <Widget>[
                         Expanded(
-                          child: FlatButton(
+                          child: TextButton(
                               onPressed: () {
                                 if (!isHide) {
                                   _controller.forward();
@@ -106,7 +104,7 @@ class _UpdateProgressWidgetState extends State<UpdateProgressWidget>
                           ),
                         ),
                         Expanded(
-                          child: FlatButton(
+                          child: TextButton(
                               onPressed: () {
                                 OverlayUtil.getInstance().hide();
                               },
@@ -163,7 +161,9 @@ class _UpdateProgressWidgetState extends State<UpdateProgressWidget>
     final apkPath = await FileUtil.getInstance().getSavePath("/Download/");
     try {
       await ApiStrategy.getInstance().client.download(
-        widget.updateUrl, apkPath + "todo-list.apk", cancelToken: token,
+        widget.updateUrl,
+        apkPath + "todo-list.apk",
+        cancelToken: token,
         onReceiveProgress: (int count, int total) {
           if (mounted) {
             setState(() {
@@ -183,7 +183,11 @@ class _UpdateProgressWidgetState extends State<UpdateProgressWidget>
               }
             });
           }
-        },options: Options(sendTimeout: 15*1000,receiveTimeout: 360*1000),);
+        },
+        options: Options(
+            sendTimeout: Duration(milliseconds: 15 * 1000),
+            receiveTimeout: Duration(milliseconds: 360 * 1000)),
+      );
     } catch (e) {
       if (mounted) {
         setState(() {

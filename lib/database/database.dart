@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -10,12 +11,12 @@ class DBProvider {
 
   static final DBProvider db = DBProvider._();
 
-  Database _database;
+  Database? _database;
 
   Future<Database> get database async {
-    if (_database != null) return _database;
+    if (_database != null) return _database!;
     _database = await initDB();
-    return _database;
+    return _database!;
   }
 
   initDB() async {
@@ -48,22 +49,26 @@ class DBProvider {
             "backgroundUrl TEXT"
             ")");
       },
-      onUpgrade: (Database db, int oldVersion, int newVersion) async{
+      onUpgrade: (Database db, int oldVersion, int newVersion) async {
         print("新版本:$newVersion");
         print("旧版本:$oldVersion");
-        if(oldVersion < 2){
-         await db.execute("ALTER TABLE TodoList ADD COLUMN changeTimes INTEGER DEFAULT 0");
+        if (oldVersion < 2) {
+          await db.execute(
+              "ALTER TABLE TodoList ADD COLUMN changeTimes INTEGER DEFAULT 0");
         }
-        if(oldVersion < 3){
+        if (oldVersion < 3) {
           await db.execute("ALTER TABLE TodoList ADD COLUMN uniqueId TEXT");
-          await db.execute("ALTER TABLE TodoList ADD COLUMN needUpdateToCloud TEXT");
+          await db.execute(
+              "ALTER TABLE TodoList ADD COLUMN needUpdateToCloud TEXT");
         }
-        if(oldVersion < 4){
+        if (oldVersion < 4) {
           await db.execute("ALTER TABLE TodoList ADD COLUMN textColor TEXT");
-          await db.execute("ALTER TABLE TodoList ADD COLUMN backgroundUrl TEXT");
+          await db
+              .execute("ALTER TABLE TodoList ADD COLUMN backgroundUrl TEXT");
         }
       },
     );
+
     ///注意，上面创建表的时候最后一行不能带逗号
   }
 
@@ -76,7 +81,10 @@ class DBProvider {
   ///根据完成进度查询所有任务
   ///
   ///isDone为true表示查询已经完成的任务,否则表示未完成
-  Future<List<TaskBean>> getTasks({bool isDone = false, String account}) async {
+  Future<List<TaskBean>> getTasks({
+    bool isDone = false,
+    String? account,
+  }) async {
     final db = await database;
     final theAccount =
         await SharedUtil.instance.getString(Keys.account) ?? "default";
@@ -90,23 +98,21 @@ class DBProvider {
     return beans;
   }
 
-
   ///查询所有任务
-  Future<List<TaskBean>> getAllTasks({String account}) async {
+  Future<List<TaskBean>> getAllTasks({String? account}) async {
     final db = await database;
     final theAccount =
         await SharedUtil.instance.getString(Keys.account) ?? "default";
     var list = await db.query("TodoList",
-        where: "account = ?" ,
-        whereArgs: [account ?? theAccount]);
+        where: "account = ?", whereArgs: [account ?? theAccount]);
     List<TaskBean> beans = [];
     beans.clear();
     beans.addAll(TaskBean.fromMapList(list));
     return beans;
   }
 
-  Future updateTask(TaskBean taskBean) async {
-    if(taskBean == null) return;
+  Future updateTask(TaskBean? taskBean) async {
+    if (taskBean == null) return;
     final db = await database;
     await db.update("TodoList", taskBean.toMap(),
         where: "id = ?", whereArgs: [taskBean.id]);
@@ -119,7 +125,7 @@ class DBProvider {
   }
 
   ///批量更新任务
-  Future updateTasks(List<TaskBean> taskBeans) async{
+  Future updateTasks(List<TaskBean> taskBeans) async {
     final db = await database;
     final batch = db.batch();
     for (var task in taskBeans) {
@@ -131,7 +137,7 @@ class DBProvider {
   }
 
   ///批量创建任务
-  Future createTasks(List<TaskBean> taskBeans) async{
+  Future createTasks(List<TaskBean> taskBeans) async {
     final db = await database;
     final batch = db.batch();
     for (var task in taskBeans) {
@@ -142,23 +148,20 @@ class DBProvider {
   }
 
   ///根据[uniqueId]查询一项任务
-  Future<List<TaskBean>> getTaskByUniqueId(String uniqueId) async{
+  Future<List<TaskBean>> getTaskByUniqueId(String uniqueId) async {
     final db = await database;
-    var tasks = await db.query("TodoList",
-        where: "uniqueId = ?" ,
-        whereArgs: [uniqueId]);
-    if(tasks.isEmpty) return null;
+    var tasks = await db
+        .query("TodoList", where: "uniqueId = ?", whereArgs: [uniqueId]);
+    if (tasks.isEmpty) return List.empty();
     return TaskBean.fromMapList(tasks);
   }
 
-
   ///批量更新账号
-  Future updateAccount(String account) async{
-
+  Future updateAccount(String account) async {
     final tasks = await getAllTasks(account: "default");
     List<TaskBean> newTasks = [];
     for (var task in tasks) {
-      if(task.account == "default"){
+      if (task.account == "default") {
         task.account = account;
         newTasks.add(task);
       }
@@ -189,6 +192,4 @@ class DBProvider {
     beans.addAll(TaskBean.fromMapList(list));
     return beans;
   }
-
-
 }

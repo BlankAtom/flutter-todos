@@ -6,21 +6,27 @@ import 'package:todo_list/model/avatar_page_model.dart';
 import 'package:todo_list/model/main_page_model.dart';
 
 class AvatarPage extends StatelessWidget {
-  final MainPageModel mainPageModel;
+  late MainPageModel? mainPageModel;
 
-  const AvatarPage({Key key, this.mainPageModel}) : super(key: key);
+  AvatarPage({required Key key, this.mainPageModel}) : super(key: key) {
+    if (this.mainPageModel == null) {
+      this.mainPageModel = MainPageModel();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final model = Provider.of<AvatarPageModel>(context);
-    model.setMainPageModel(mainPageModel);
+    model.setMainPageModel(mainPageModel!);
     model.setContext(context);
 
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text(IntlLocalizations.of(context).avatar,),
+        title: Text(
+          IntlLocalizations.of(context).avatar,
+        ),
         actions: <Widget>[
           PopupMenuButton(
             onSelected: (value) => model.logic.onAvatarSelect(value, context),
@@ -64,14 +70,16 @@ class AvatarPage extends StatelessWidget {
           ),
           Align(
             alignment: Alignment(0, 0.8),
-            child: FlatButton(
-              color: Theme.of(context).primaryColor,
-              highlightColor: Theme.of(context).primaryColorLight,
-              colorBrightness: Brightness.dark,
-              splashColor: Theme.of(context).primaryColorDark,
+            child: TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                splashFactory: InkSplash.splashFactory,
+              ),
               child: Text(IntlLocalizations.of(context).save),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0)),
               onPressed: model.logic.onSaveTap,
             ),
           )

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:todo_list/config/api_service.dart';
 import 'package:todo_list/i10n/localization_intl.dart';
-import 'package:todo_list/json/upload_avatar_bean.dart';
 import 'package:todo_list/model/avatar_page_model.dart';
 import 'package:todo_list/model/main_page_model.dart';
 import 'package:todo_list/utils/file_util.dart';
@@ -13,11 +12,10 @@ import 'package:todo_list/widgets/net_loading_widget.dart';
 
 class AvatarHistoryPage extends StatefulWidget {
   final String currentAvatarUrl;
-  final AvatarPageModel avatarPageModel;
+  final AvatarPageModel? avatarPageModel;
 
   const AvatarHistoryPage(
-      {Key key, @required this.currentAvatarUrl, this.avatarPageModel})
-      : super(key: key);
+      {required this.currentAvatarUrl, this.avatarPageModel});
 
   @override
   _AvatarHistoryPageState createState() => _AvatarHistoryPageState();
@@ -58,6 +56,7 @@ class _AvatarHistoryPageState extends State<AvatarHistoryPage> {
                       isDeleting = !isDeleting;
                       setState(() {});
                     },
+                    key: GlobalKey(),
                   )
                 : SizedBox(),
           ),
@@ -92,7 +91,7 @@ class _AvatarHistoryPageState extends State<AvatarHistoryPage> {
                       String transFormName =
                           Uri.encodeFull(fileName).replaceAll("%", "");
                       uploadAvatar(
-                          account, token, path, transFormName, context);
+                          account, token!, path, transFormName, context);
                     }
                   },
                   child: ClipRRect(
@@ -137,15 +136,16 @@ class _AvatarHistoryPageState extends State<AvatarHistoryPage> {
     );
   }
 
+  // TODO: 这里是整个项目许多地方都同时存在的问题，太冗余了
   Future onAvatarSelect(String url, BuildContext context) async {
     final avatarPageModel = widget.avatarPageModel;
-    final mainPageModel = avatarPageModel.mainPageModel;
-    mainPageModel.currentAvatarUrl = url;
-    mainPageModel.currentAvatarType = CurrentAvatarType.local;
+    var mainPageModel = avatarPageModel?.mainPageModel;
+    mainPageModel?.currentAvatarUrl = url;
+    mainPageModel?.currentAvatarType = CurrentAvatarType.local;
     await SharedUtil.instance.saveString(Keys.localAvatarPath, url);
     await SharedUtil.instance
         .saveInt(Keys.currentAvatarType, CurrentAvatarType.local);
-    mainPageModel.refresh();
+    mainPageModel?.refresh();
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
@@ -178,7 +178,9 @@ class _AvatarHistoryPageState extends State<AvatarHistoryPage> {
     showDialog(
         context: context,
         builder: (ctx) {
-          return NetLoadingWidget();
+          return NetLoadingWidget(
+            key: GlobalKey(),
+          );
         });
   }
 

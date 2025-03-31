@@ -4,20 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list/config/api_service.dart';
 import 'package:todo_list/i10n/localization_intl.dart';
-import 'package:todo_list/json/common_bean.dart';
 import 'package:todo_list/model/global_model.dart';
 
 class VerifyCodeWidget extends StatefulWidget {
-  final String account;
+  final String? account;
   final bool isUserNameOk;
   final bool isEmailOk;
   final bool isForgetPassword;
 
   const VerifyCodeWidget({
-    Key key,
+    required Key key,
     this.account,
     this.isUserNameOk = true,
-    this.isEmailOk = true, this.isForgetPassword = false,
+    this.isEmailOk = true,
+    this.isForgetPassword = false,
   }) : super(key: key);
 
   @override
@@ -25,9 +25,9 @@ class VerifyCodeWidget extends StatefulWidget {
 }
 
 class _VerifyCodeWidgetState extends State<VerifyCodeWidget> {
-  String verifyTextShow;
+  late String verifyTextShow;
   Color codeColor = Colors.green;
-  Timer _timer;
+  late Timer _timer;
   bool isGettingCode = false;
   CancelToken cancelToken = CancelToken();
 
@@ -50,7 +50,7 @@ class _VerifyCodeWidgetState extends State<VerifyCodeWidget> {
     if (verifyTextShow == null) {
       verifyTextShow = IntlLocalizations.of(context).getVerifyCode;
     }
-    return FlatButton(
+    return TextButton(
       onPressed: () {
         if (isGettingCode) return;
         if (!widget.isEmailOk) {
@@ -70,7 +70,7 @@ class _VerifyCodeWidgetState extends State<VerifyCodeWidget> {
         });
         ApiService.instance.getVerifyCode(
           params: {
-            "account": widget.account,
+            "account": widget.account ?? 'None user',
             "why": widget.isForgetPassword ? "emailForget" : "emailRegister",
             "language": globalModel.currentLanguageCode[0]
           },

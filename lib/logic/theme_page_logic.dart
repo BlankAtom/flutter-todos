@@ -1,15 +1,14 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:todo_list/i10n/localization_intl.dart';
 import 'package:todo_list/json/theme_bean.dart';
 import 'package:todo_list/model/all_model.dart';
 import 'package:todo_list/utils/shared_util.dart';
 import 'package:todo_list/utils/theme_util.dart';
 import 'package:todo_list/widgets/custom_time_picker.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class ThemePageLogic {
   final ThemePageModel _model;
@@ -51,7 +50,7 @@ class ThemePageLogic {
               ),
             ),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 child: Text(
                   IntlLocalizations.of(context).cancel,
                   style: TextStyle(color: Colors.redAccent),
@@ -60,7 +59,7 @@ class ThemePageLogic {
                   Navigator.of(context).pop();
                 },
               ),
-              FlatButton(
+              TextButton(
                 child: Text(IntlLocalizations.of(context).ok),
                 onPressed: () async {
                   final beans =
@@ -122,13 +121,13 @@ class ThemePageLogic {
         margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
         alignment: Alignment.center,
         child: Text(
-          themeBean.themeName,
+          themeBean.themeName!,
           style: TextStyle(color: Colors.white, fontSize: 12),
         ),
         decoration: BoxDecoration(
           color: themeBean.themeType == MyTheme.darkTheme
               ? Colors.black
-              : ColorBean.fromBean(themeBean.colorBean),
+              : ColorBean.fromBean(themeBean.colorBean!),
           shape: BoxShape.rectangle,
           border: isCurrent ? Border.all(color: Colors.grey, width: 3) : null,
           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -158,7 +157,7 @@ class ThemePageLogic {
         margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
         alignment: Alignment.center,
         child: Text(
-          themeBean.themeName,
+          themeBean.themeName!,
           style: TextStyle(color: Colors.white, fontSize: 12),
         ),
         decoration: BoxDecoration(
@@ -176,31 +175,39 @@ class ThemePageLogic {
   }
 
   void onAutoThemeChanged(GlobalModel globalModel, bool value) async {
-    if(value){
+    if (value) {
       showModalBottomSheet(
           backgroundColor: Colors.transparent,
           context: _model.context,
           builder: (ctx) {
-            return CustomTimePicker(callBack: (start, end){
-              globalModel.enableAutoDarkMode = value;
-              globalModel.autoDarkModeTimeRange = '$start/$end';
-              SharedUtil.instance.saveBoolean(Keys.autoDarkMode, globalModel.enableAutoDarkMode);
-              SharedUtil.instance.saveString(Keys.autoDarkModeTimeRange, globalModel.autoDarkModeTimeRange);
-              globalModel.logic.chooseTheme();
-              globalModel.refresh();
-            },);
+            return CustomTimePicker(
+              callBack: (start, end) {
+                globalModel.enableAutoDarkMode = value;
+                globalModel.autoDarkModeTimeRange = '$start/$end';
+                SharedUtil.instance.saveBoolean(
+                    Keys.autoDarkMode, globalModel.enableAutoDarkMode);
+                SharedUtil.instance.saveString(Keys.autoDarkModeTimeRange,
+                    globalModel.autoDarkModeTimeRange);
+                globalModel.logic.chooseTheme();
+                globalModel.refresh();
+              },
+              key: GlobalKey(),
+            );
           });
     } else {
       globalModel.enableAutoDarkMode = value;
-      SharedUtil.instance.saveBoolean(Keys.autoDarkMode, globalModel.enableAutoDarkMode);
-      globalModel.logic.getCurrentTheme().then((value) => globalModel.refresh());
+      SharedUtil.instance
+          .saveBoolean(Keys.autoDarkMode, globalModel.enableAutoDarkMode);
+      globalModel.logic
+          .getCurrentTheme()
+          .then((value) => globalModel.refresh());
     }
   }
 
-  String getTimeRangeText(String time, bool needToShow){
-    if(time.isEmpty || !needToShow) return '';
+  String getTimeRangeText(String time, bool needToShow) {
+    if (time.isEmpty || !needToShow) return '';
     final times = time.split('/');
-    if(time.length < 2) return '';
+    if (time.length < 2) return '';
     return '${times[0]}-${times[1]}';
   }
 }

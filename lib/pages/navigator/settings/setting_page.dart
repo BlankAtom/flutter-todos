@@ -66,6 +66,7 @@ void onWeatherOpen(bool value, BuildContext context, GlobalModel globalModel) {
                 context: ctx1,
                 builder: (ctx2) {
                   return NetLoadingWidget(
+                    key: GlobalKey(),
                     onRequest: () {
                       globalModel.logic.getWeatherNow(
                           globalModel.currentPosition,
@@ -83,6 +84,7 @@ void onWeatherOpen(bool value, BuildContext context, GlobalModel globalModel) {
                   );
                 });
           },
+          key: GlobalKey(),
         );
       },
     );

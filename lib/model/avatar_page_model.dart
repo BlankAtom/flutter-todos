@@ -4,11 +4,10 @@ import 'package:todo_list/config/api_service.dart';
 import 'package:todo_list/logic/all_logic.dart';
 import 'package:todo_list/model/main_page_model.dart';
 
-class AvatarPageModel extends ChangeNotifier{
-
-  AvatarPageLogic logic;
-  BuildContext context;
-  MainPageModel mainPageModel;
+class AvatarPageModel extends ChangeNotifier {
+  late AvatarPageLogic logic;
+  late BuildContext context;
+  late MainPageModel mainPageModel;
   CancelToken cancelToken = CancelToken();
 
   //当前头像的类型
@@ -18,31 +17,30 @@ class AvatarPageModel extends ChangeNotifier{
 
   final cropKey = GlobalKey<CropState>();
 
-  AvatarPageModel(){
+  AvatarPageModel() {
     logic = AvatarPageLogic(this);
   }
 
-
-  void setContext(BuildContext context){
-    if(this.context == null){
-        this.context = context;
+  void setContext(BuildContext context) {
+    if (this.context == null) {
+      this.context = context;
     }
   }
 
   @override
-  void dispose(){
+  void dispose() {
     cropKey?.currentState?.dispose();
     cancelToken?.cancel();
     super.dispose();
     debugPrint("AvatarPageModel销毁了");
   }
 
-  void refresh(){
+  void refresh() {
     notifyListeners();
   }
 
   void setMainPageModel(MainPageModel mainPageModel) {
-    if(this.mainPageModel == null){
+    if (this.mainPageModel == null) {
       this.mainPageModel = mainPageModel;
       this.currentAvatarType = mainPageModel.currentAvatarType;
       this.currentAvatarUrl = mainPageModel.currentAvatarUrl;

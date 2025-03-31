@@ -4,19 +4,18 @@ import 'package:todo_list/logic/all_logic.dart';
 import 'package:todo_list/widgets/net_loading_widget.dart';
 
 class ResetPasswordPageModel extends ChangeNotifier {
-  ResetPasswordPageLogic logic;
-  BuildContext context;
+  late ResetPasswordPageLogic logic;
+  late BuildContext context;
 
   ///true表示重新设置密码，false表示忘记密码
   ///前者需要用到[oldPassword],后者需要用到[verifyCode]
-  bool isReset;
+  bool isReset = false;
 
   String emailAccount = "";
   String newPassword = "";
   String oldPassword = "";
   String rePassword = "";
   String verifyCode = "";
-
 
   bool isVerifyCodeOk = false;
   bool isEmailOk = false;
@@ -39,8 +38,6 @@ class ResetPasswordPageModel extends ChangeNotifier {
   final rePasswordFocusNode = FocusNode();
   final verifyCodeFocusNode = FocusNode();
 
-
-
   ResetPasswordPageModel(bool isReset) {
     logic = ResetPasswordPageLogic(this);
     this.isReset = isReset;
@@ -52,14 +49,13 @@ class ResetPasswordPageModel extends ChangeNotifier {
     }
   }
 
-  void disposeNode(){
+  void disposeNode() {
     emailFocusNode.dispose();
     oldPasswordFocusNode.dispose();
     passwordFocusNode.dispose();
     rePasswordFocusNode.dispose();
     verifyCodeFocusNode.dispose();
   }
-
 
   @override
   void dispose() {
@@ -68,8 +64,6 @@ class ResetPasswordPageModel extends ChangeNotifier {
     super.dispose();
     debugPrint("ResetPasswordPageModel销毁了");
   }
-
-
 
   void refresh() {
     notifyListeners();

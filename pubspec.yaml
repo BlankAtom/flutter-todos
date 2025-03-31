@@ -6,7 +6,7 @@ description: A new Flutter project.
 version: 1.1.2+1
 
 environment:
-  sdk: ">=2.6.0 <3.0.0"
+  sdk: ">=3.0.0"
 
 dependencies:
   flutter:
@@ -23,18 +23,18 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   #intl语言包
-  intl: ^0.17.0
+  intl: ^0.19.0
 
 
 
   #网络请求
-  dio: ^4.0.4
+  dio: ^5.8.0
   #本地存储
   shared_preferences: ^2.0.9
   #状态管理
   provider: ^6.0.1
   #滑动控件
-  carousel_slider: ^4.0.0
+  carousel_slider: ^5.0.0
   #环形列表
   circle_list: ^1.0.5
 #  #intl语言包
@@ -46,15 +46,15 @@ dev_dependencies:
   #图片缓存
   cached_network_image: ^3.2.0
   #图片选取
-  image_picker: ^0.8.4+4
+  image_picker: ^1.1.2
   #权限申请
-  permission_handler: ^8.3.0
+  permission_handler: ^11.4.0
   #路径获取
   path_provider: ^2.0.7
   #图片裁剪
   image_crop: ^0.4.0
   #svg----这个控件真是饱受挫折呀！
-  flutter_svg: ^1.0.0
+  flutter_svg: ^2.0.17
   #获取package信息
   package_info: ^2.0.2
   #网页
@@ -62,7 +62,7 @@ dev_dependencies:
   #上拉加载
   pull_to_refresh: ^2.0.0
   #看图片
-  photo_view: ^0.13.0
+  photo_view: ^0.15.0
   #url,可以用来打开应用商店
   url_launcher: ^6.0.17
   #打开文件，android更新下载安装包用

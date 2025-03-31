@@ -6,19 +6,21 @@ class ColorBean {
   int blue;
   double opacity;
 
-  ColorBean({this.red, this.green, this.blue, this.opacity});
+  ColorBean({this.red = 0, this.green = 0, this.blue = 0, this.opacity = 1});
 
   static Color fromBean(ColorBean bean) =>
       Color.fromRGBO(bean.red, bean.green, bean.blue, bean.opacity);
 
-  static ColorBean fromMap(Map<String, dynamic> map) {
-    if(map == null) return null;
-    if(map.isEmpty) return null;
+  static ColorBean? fromMap(Map<String, dynamic>? map) {
+    if (map == null) return null;
+    if (map.isEmpty) return null;
     ColorBean bean = new ColorBean();
     bean.red = map['red'] is int ? map['red'] : int.parse(map['red']);
-    bean.green =map['green'] is int ? map['green'] : int.parse(map['green']);
+    bean.green = map['green'] is int ? map['green'] : int.parse(map['green']);
     bean.blue = map['blue'] is int ? map['blue'] : int.parse(map['blue']);
-    bean.opacity = map['opacity'] is double ? map['opacity'] :double.parse(map['opacity']);
+    bean.opacity = map['opacity'] is double
+        ? map['opacity']
+        : double.parse(map['opacity']);
     return bean;
   }
 
@@ -40,12 +42,12 @@ class ColorBean {
     };
   }
 
-
-  bool equalTo(other){
-    if(other.runtimeType != ColorBean) return false;
+  bool equalTo(other) {
+    if (other.runtimeType != ColorBean) return false;
     ColorBean bean = other;
-    return bean.red == red && bean.green == green && bean.blue == blue && bean.opacity == opacity;
+    return bean.red == red &&
+        bean.green == green &&
+        bean.blue == blue &&
+        bean.opacity == opacity;
   }
-
-
 }

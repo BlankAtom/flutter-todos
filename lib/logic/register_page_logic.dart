@@ -9,8 +9,7 @@ import 'package:todo_list/utils/my_encrypt_util.dart';
 import 'package:todo_list/utils/shared_util.dart';
 import 'package:todo_list/widgets/net_loading_widget.dart';
 
-class RegisterPageLogic{
-
+class RegisterPageLogic {
   final RegisterPageModel _model;
 
   RegisterPageLogic(this._model);
@@ -18,16 +17,14 @@ class RegisterPageLogic{
   String validatorUserName(String userName) {
     final context = _model.context;
     _model.isUserNameOk = false;
-    if (userName.isEmpty) {
+    if (userName.trim().isEmpty) {
       return IntlLocalizations.of(context).usernameCantBeEmpty;
-    } else if (userName.contains(" ")) {
-      return IntlLocalizations.of(context).userNameContainEmpty;
     } else {
       _model.userName = userName;
       _model.isUserNameOk = true;
       debugPrint("用户名通过");
       _model.refresh();
-      return null;
+      return 'Access';
     }
   }
 
@@ -43,14 +40,14 @@ class RegisterPageLogic{
       _model.isVerifyCodeOk = true;
       debugPrint("验证码通过");
       _model.refresh();
-      return null;
+      return 'Accrss';
     }
   }
 
   String validatorEmail(String email) {
     final context = _model.context;
     _model.isEmailOk = false;
-    Pattern pattern =
+    String pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = new RegExp(pattern);
     if (email.isEmpty)
@@ -62,26 +59,25 @@ class RegisterPageLogic{
       _model.email = email;
       debugPrint("邮箱通过");
       _model.refresh();
-      return null;
+      return 'Access';
     }
   }
 
   String validateRePassword(String rePassword) {
     _model.isRePasswordOk = false;
     final context = _model.context;
-    if (rePassword.isEmpty) {
+    if (rePassword.trim().isEmpty) {
       return IntlLocalizations.of(context).confirmPasswordCantBeEmpty;
     } else if (_model.password != rePassword) {
       return IntlLocalizations.of(context).twoPasswordsNotSame;
-    } else if(rePassword.contains(" ")){
+    } else if (rePassword.contains(" ")) {
       return IntlLocalizations.of(context).confirmPasswordContainEmpty;
-    }
-    else {
+    } else {
       _model.rePassword = rePassword;
       _model.isRePasswordOk = true;
       debugPrint("密码2通过");
       _model.refresh();
-      return null;
+      return 'Access';
     }
   }
 
@@ -89,7 +85,7 @@ class RegisterPageLogic{
     _model.isPasswordOk = false;
     final context = _model.context;
     if (password.isEmpty) {
-      return  IntlLocalizations.of(context).passwordCantBeEmpty;
+      return IntlLocalizations.of(context).passwordCantBeEmpty;
     } else if (password.length < 8) {
       return IntlLocalizations.of(context).passwordTooShort;
     } else if (password.length > 20) {
@@ -99,35 +95,43 @@ class RegisterPageLogic{
       _model.isPasswordOk = true;
       debugPrint("密码通过");
       _model.refresh();
-      return null;
+      return 'Access';
     }
   }
 
-  void _validate(){
-    bool b1 = _model.emailKey?.currentState?.validate();
-    bool b2 = _model.userNameKey?.currentState?.validate();
-    bool b3 = _model.rePasswordKey?.currentState?.validate();
-    bool b4 = _model.passwordKey?.currentState?.validate();
-    bool b5 = _model.verifyCodeKey?.currentState?.validate();
+  void _validate() {
+    bool b1 = _model.emailKey.currentState?.validate() ?? false;
+    bool b2 = _model.userNameKey.currentState?.validate() ?? false;
+    bool b3 = _model.rePasswordKey.currentState?.validate() ?? false;
+    bool b4 = _model.passwordKey.currentState?.validate() ?? false;
+    bool b5 = _model.verifyCodeKey.currentState?.validate() ?? false;
     debugPrint("$b1 - $b2 - $b3 - $b4 - $b5");
   }
 
-  void onSubmit(){
+  void onSubmit() {
     final model = _model;
     final context = _model.context;
     _validate();
-    if(!model.isUserNameOk || !model.isEmailOk || !model.isVerifyCodeOk || !model.isPasswordOk || !model.isRePasswordOk){
+    if (!model.isUserNameOk ||
+        !model.isEmailOk ||
+        !model.isVerifyCodeOk ||
+        !model.isPasswordOk ||
+        !model.isRePasswordOk) {
       _showTextDialog(IntlLocalizations.of(context).wrongParams, context);
       return;
     }
-    showDialog(context: context, builder: (ctx){
-      return NetLoadingWidget();
-    });
+    showDialog(
+        context: context,
+        builder: (ctx) {
+          return NetLoadingWidget(
+            key: GlobalKey(),
+          );
+        });
     _registerEmail(model, context);
   }
 
   void _registerEmail(RegisterPageModel model, BuildContext context) {
-       final encryptPassword = EncryptUtil().encrypt(model.password);
+    final encryptPassword = EncryptUtil().encrypt(model.password);
     ApiService.instance.postRegister(
       params: {
         "account": model.email,
@@ -136,32 +140,32 @@ class RegisterPageLogic{
         "username": model.userName,
         "identifyCode": model.verifyCode,
       },
-      success: (RegisterBean bean){
-        SharedUtil.instance.saveString(Keys.account, model.email).then((value){
+      success: (RegisterBean bean) {
+        SharedUtil.instance.saveString(Keys.account, model.email).then((value) {
           SharedUtil.instance.saveString(Keys.password, encryptPassword);
           SharedUtil.instance.saveString(Keys.currentUserName, model.userName);
           SharedUtil.instance.saveString(Keys.token, bean.token);
           SharedUtil.instance.saveBoolean(Keys.hasLogged, true);
-          if(bean.avatarUrl != null){
-            SharedUtil.instance.saveString(Keys.netAvatarPath, ApiStrategy.baseUrl + bean.avatarUrl);
-            SharedUtil.instance.saveInt(Keys.currentAvatarType, CurrentAvatarType.net);
+          if (bean.avatarUrl != null) {
+            SharedUtil.instance.saveString(
+                Keys.netAvatarPath, ApiStrategy.baseUrl + bean.avatarUrl);
+            SharedUtil.instance
+                .saveInt(Keys.currentAvatarType, CurrentAvatarType.net);
           }
-        }).then((v){
-          DBProvider.db.updateAccount(model.email).then((v){
+        }).then((v) {
+          DBProvider.db.updateAccount(model.email).then((v) {
             Navigator.of(context).pushAndRemoveUntil(
-                new MaterialPageRoute(
-                    builder: (context){
-                      return ProviderConfig.getInstance().getMainPage();
-                    }),
-                    (router) => router == null);
+                new MaterialPageRoute(builder: (context) {
+              return ProviderConfig.getInstance().getMainPage();
+            }), (router) => router == null);
           });
         });
       },
-      failed: (RegisterBean bean){
+      failed: (RegisterBean bean) {
         Navigator.of(context).pop();
         _showTextDialog(bean.description, context);
       },
-      error: (msg){
+      error: (msg) {
         Navigator.of(context).pop();
         _showTextDialog(msg, context);
       },
@@ -183,5 +187,4 @@ class RegisterPageLogic{
           );
         });
   }
-
 }

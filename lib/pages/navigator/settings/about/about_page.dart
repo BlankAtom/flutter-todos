@@ -1,12 +1,11 @@
 import 'dart:io';
-import 'package:dio/dio.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list/config/api_service.dart';
 import 'package:todo_list/i10n/localization_intl.dart';
-import 'package:package_info/package_info.dart';
-import 'package:todo_list/json/update_info_bean.dart';
 import 'package:todo_list/model/global_model.dart';
 import 'package:todo_list/pages/navigator/settings/about/webview_page.dart';
 import 'package:todo_list/widgets/loading_widget.dart';
@@ -21,11 +20,10 @@ class AboutPage extends StatefulWidget {
 class _AboutPageState extends State<AboutPage> {
   List<String> descriptions = [];
 
-
   @override
   Widget build(BuildContext context) {
     final globalModel = Provider.of<GlobalModel>(context);
-    if(descriptions.isEmpty){
+    if (descriptions.isEmpty) {
       descriptions.add(IntlLocalizations.of(context).version112);
       descriptions.add(IntlLocalizations.of(context).version111);
       descriptions.add(IntlLocalizations.of(context).version110);
@@ -59,7 +57,7 @@ class _AboutPageState extends State<AboutPage> {
           margin: EdgeInsets.all(20),
           child: NotificationListener<OverscrollIndicatorNotification>(
             onNotification: (overScroll) {
-              overScroll.disallowGlow();
+              overScroll.disallowIndicator();
               return true;
             },
             child: Column(
@@ -71,8 +69,9 @@ class _AboutPageState extends State<AboutPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     InkWell(
-                      onTap: (){
-                        Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) {
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(CupertinoPageRoute(builder: (ctx) {
                           return WebViewPage(
                             'https://oldchen.top/flutter-blog/#/',
                             title: IntlLocalizations.of(context).myBlog,
@@ -123,9 +122,10 @@ class _AboutPageState extends State<AboutPage> {
                                       future: PackageInfo.fromPlatform(),
                                       builder: (context, snapshot) {
                                         if (snapshot.hasData) {
-                                          PackageInfo packageInfo = snapshot.data;
+                                          PackageInfo? packageInfo =
+                                              snapshot.data;
                                           return Text(
-                                            packageInfo.version,
+                                            packageInfo?.version ?? 'NULL',
                                             style: TextStyle(
                                                 fontSize: 20,
                                                 color: Theme.of(context)
@@ -139,14 +139,16 @@ class _AboutPageState extends State<AboutPage> {
                                           return Container();
                                       }),
                                 ),
-                                SizedBox(width: 30,),
+                                SizedBox(
+                                  width: 30,
+                                ),
                                 Platform.isAndroid
                                     ? GestureDetector(
-                                      child: Icon(
-                                        Icons.cloud_upload,
-                                      ),
-                                      onTap: () => checkUpdate(globalModel),
-                                    )
+                                        child: Icon(
+                                          Icons.cloud_upload,
+                                        ),
+                                        onTap: () => checkUpdate(globalModel),
+                                      )
                                     : SizedBox(),
                               ],
                             ),
@@ -164,11 +166,11 @@ class _AboutPageState extends State<AboutPage> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(20))),
                       child: Container(
-                        margin: EdgeInsets.only(left: 20, top: 30,right: 20),
+                        margin: EdgeInsets.only(left: 20, top: 30, right: 20),
                         child: NotificationListener<
                             OverscrollIndicatorNotification>(
                           onNotification: (overScroll) {
-                            overScroll.disallowGlow();
+                            overScroll.disallowIndicator();
                             return true;
                           },
                           child: ListView(
@@ -178,7 +180,8 @@ class _AboutPageState extends State<AboutPage> {
                               return Container(
                                 margin: EdgeInsets.only(bottom: 20),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     Text(
                                       IntlLocalizations.of(context)
@@ -194,10 +197,13 @@ class _AboutPageState extends State<AboutPage> {
                                         style: TextStyle(color: Colors.blue),
                                       ),
                                       onTap: () {
-                                        Navigator.of(context).push(new CupertinoPageRoute(builder: (ctx) {
+                                        Navigator.of(context).push(
+                                            new CupertinoPageRoute(
+                                                builder: (ctx) {
                                           return WebViewPage(
                                             "https://github.com/asjqkkkk/todo-list-app",
-                                            title: IntlLocalizations.of(context).myGithub,
+                                            title: IntlLocalizations.of(context)
+                                                .myGithub,
                                           );
                                         }));
                                       },
@@ -246,7 +252,6 @@ class _AboutPageState extends State<AboutPage> {
     );
   }
 
-
   void checkUpdate(GlobalModel globalModel) {
     final loadingController = globalModel.loadingController;
 
@@ -294,6 +299,7 @@ class _AboutPageState extends State<AboutPage> {
               );
             },
             cancelToken: cancelToken,
+            key: GlobalKey(),
           );
         });
   }

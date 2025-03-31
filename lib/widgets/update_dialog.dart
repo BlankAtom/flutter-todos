@@ -11,8 +11,8 @@ class UpdateDialog extends StatefulWidget {
   final String updateInfo;
   final String updateUrl;
   final bool isForce;
-  final Color backgroundColor;
-  final Color updateInfoColor;
+  final Color? backgroundColor;
+  final Color? updateInfoColor;
 
   UpdateDialog({
     this.version = "1.0.0",
@@ -29,7 +29,7 @@ class UpdateDialog extends StatefulWidget {
 
 class UpdateDialogState extends State<UpdateDialog> {
   int _downloadProgress = 0;
-  CancelToken token;
+  CancelToken? token;
   UploadingFlag uploadingFlag = UploadingFlag.idle;
 
   @override
@@ -98,7 +98,7 @@ class UpdateDialogState extends State<UpdateDialog> {
                     !widget.isForce
                         ? Expanded(
                             flex: 1,
-                            child: FlatButton(
+                            child: TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
@@ -117,7 +117,7 @@ class UpdateDialogState extends State<UpdateDialog> {
                         : SizedBox(),
                     Expanded(
                       flex: 1,
-                      child: FlatButton(
+                      child: TextButton(
                           onPressed: () async {
                             if (uploadingFlag == UploadingFlag.uploading)
                               return;
@@ -165,7 +165,8 @@ class UpdateDialogState extends State<UpdateDialog> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(widget.updateInfoColor ?? Colors.white),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                  widget.updateInfoColor ?? Colors.white),
             ),
             SizedBox(
               width: 5,
@@ -210,13 +211,16 @@ class UpdateDialogState extends State<UpdateDialog> {
     return Container();
   }
 
-
   void _showOverlay() {
     OverlayUtil.getInstance().show(context,
         showWidget: TopAnimationShowWidget(
-          child: UpdateProgressWidget(updateUrl: widget.updateUrl,),
+          child: UpdateProgressWidget(
+            updateUrl: widget.updateUrl,
+            key: GlobalKey(),
+          ),
           distanceY: 100,
-        ),duration: Duration(seconds: 4));
+        ),
+        duration: Duration(seconds: 4));
   }
 
   @override
@@ -227,7 +231,7 @@ class UpdateDialogState extends State<UpdateDialog> {
 
   @override
   void dispose() {
-    if (!token.isCancelled) token?.cancel();
+    if (!(token?.isCancelled ?? false)) token?.cancel();
     super.dispose();
     debugPrint("升级销毁");
   }

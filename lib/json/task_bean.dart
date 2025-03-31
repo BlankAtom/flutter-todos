@@ -13,7 +13,7 @@ class TaskBean {
   double overallProgress;
 
   ///存放在云端后拿到的云数据库Id,若[cloudId]为空，表示尚未上传到云端
-  String uniqueId;
+  String? uniqueId;
 
   ///是否需要在云端更新,true or false
   String needUpdateToCloud;
@@ -34,36 +34,39 @@ class TaskBean {
   String deadLine;
 
   ///当前任务的图标信息
-  TaskIconBean taskIconBean;
-  List<TaskDetailBean> detailList = [];
-
+  TaskIconBean? taskIconBean;
+  List<TaskDetailBean>? detailList;
 
   ///以下内容，只存储在本地数据库内。
 
   ///当前字体颜色
-  ColorBean textColor;
-  ///当前卡片背景图片地址
-  String backgroundUrl;
+  ColorBean? textColor;
 
-  TaskBean(
-      {this.taskName = "",
-      this.taskType = "",
-      this.taskStatus = TaskStatus.todo,
-      this.taskDetailNum,
-      this.overallProgress = 0.0,
-      this.uniqueId,
-      this.needUpdateToCloud = 'true',
-      this.changeTimes = 0,
-      this.createDate = "",
-      this.finishDate = "",
-      this.account = "default",
-      this.startDate = "",
-      this.deadLine = "",
-      this.taskIconBean,
-      this.detailList,
-      this.textColor,
-      this.backgroundUrl,
-      });
+  ///当前卡片背景图片地址
+  String? backgroundUrl;
+
+  TaskBean({
+    this.id = 0,
+    this.taskName = "",
+    this.taskType = "",
+    this.taskStatus = TaskStatus.todo,
+    this.taskDetailNum = 0,
+    this.overallProgress = 0.0,
+    this.uniqueId,
+    this.needUpdateToCloud = 'true',
+    this.changeTimes = 0,
+    this.createDate = "",
+    this.finishDate = "",
+    this.account = "default",
+    this.startDate = "",
+    this.deadLine = "",
+    this.taskIconBean,
+    this.detailList,
+    this.textColor,
+    this.backgroundUrl,
+  }) {
+    if (this.detailList == null) this.detailList = List.empty(growable: true);
+  }
 
   static TaskBean fromMap(Map<String, dynamic> map) {
     TaskBean taskBean = new TaskBean();
@@ -81,7 +84,7 @@ class TaskBean {
     taskBean.finishDate = map['finishDate'];
     taskBean.startDate = map['startDate'];
     taskBean.deadLine = map['deadLine'];
-    if(map['taskIconBean'] is String){
+    if (map['taskIconBean'] is String) {
       var taskIconBean = jsonDecode(map['taskIconBean']);
       taskBean.taskIconBean = TaskIconBean.fromMap(taskIconBean);
     } else {
@@ -93,7 +96,7 @@ class TaskBean {
     } else {
       taskBean.detailList = TaskDetailBean.fromMapList(map['detailList']);
     }
-    if (map['textColor'] is String){
+    if (map['textColor'] is String) {
       var textColor = jsonDecode(map['textColor']);
       taskBean.textColor = ColorBean.fromMap(textColor);
     } else {
@@ -118,7 +121,7 @@ class TaskBean {
     taskBean.finishDate = map['finishDate'];
     taskBean.startDate = map['startDate'];
     taskBean.deadLine = map['deadLine'];
-    if(map['taskIconBean'] is String){
+    if (map['taskIconBean'] is String) {
       var taskIconBean = jsonDecode(map['taskIconBean']);
       taskBean.taskIconBean = TaskIconBean.fromMap(taskIconBean);
     } else {
@@ -134,7 +137,7 @@ class TaskBean {
   }
 
   static List<TaskBean> fromMapList(dynamic mapList) {
-    List<TaskBean> list = List.filled(mapList.length, null);
+    List<TaskBean> list = List.filled(mapList.length, TaskBean());
     for (int i = 0; i < mapList.length; i++) {
       list[i] = fromMap(mapList[i]);
     }
@@ -142,7 +145,7 @@ class TaskBean {
   }
 
   static List<TaskBean> fromNetMapList(dynamic mapList) {
-    List<TaskBean> list = List.filled(mapList.length, null);
+    List<TaskBean> list = List.filled(mapList.length, TaskBean());
     for (int i = 0; i < mapList.length; i++) {
       list[i] = fromNetMap(mapList[i]);
     }
@@ -155,7 +158,8 @@ class TaskBean {
       'taskType': taskType,
       'taskStatus': taskStatus,
       'taskDetailNum': taskDetailNum,
-      'overallProgress': (overallProgress >= 1.0 ? 1.0 : overallProgress).toString(),
+      'overallProgress':
+          (overallProgress >= 1.0 ? 1.0 : overallProgress).toString(),
       'createDate': createDate,
       'account': account,
       'uniqueId': uniqueId,
@@ -164,16 +168,15 @@ class TaskBean {
       'finishDate': finishDate,
       'startDate': startDate,
       'deadLine': deadLine,
-      'taskIconBean': jsonEncode(taskIconBean.toMap()),
+      'taskIconBean': jsonEncode(taskIconBean?.toMap()),
       'textColor': jsonEncode(textColor?.toMap()),
       'backgroundUrl': backgroundUrl,
-      'detailList': jsonEncode(List.generate(detailList.length, (index) {
-        return detailList[index].toMap();
+      'detailList': jsonEncode(List.generate(detailList!.length, (index) {
+        return detailList![index].toMap();
       }))
     };
     //把list转换为string的时候不要直接使用tostring，要用jsonEncode
   }
-
 
   @override
   String toString() {
@@ -181,22 +184,20 @@ class TaskBean {
   }
 
   ///是否需要在云端更新
-  bool getNeedUpdateToCloud(TaskBean taskBean){
+  bool getNeedUpdateToCloud(TaskBean taskBean) {
     final uniqueId = taskBean.uniqueId;
     final account = taskBean.account;
-    if(account == 'default') return false;
-    if(uniqueId == null){
+    if (account == 'default') return false;
+    if (uniqueId == null) {
       taskBean.needUpdateToCloud = 'true';
       return true;
     }
-    if(taskBean.needUpdateToCloud == null){
+    if (taskBean.needUpdateToCloud == null) {
       taskBean.needUpdateToCloud = 'true';
       return true;
     }
     return taskBean.needUpdateToCloud == 'true';
   }
-
-
 }
 
 //单个任务详情的json数据
@@ -209,12 +210,14 @@ class TaskDetailBean {
   static TaskDetailBean fromMap(Map<String, dynamic> map) {
     TaskDetailBean taskDetailBean = new TaskDetailBean();
     taskDetailBean.taskDetailName = map['taskDetailName'];
-    taskDetailBean.itemProgress = map['itemProgress'] is double ? map['itemProgress'] : double.parse(map['itemProgress']);
+    taskDetailBean.itemProgress = map['itemProgress'] is double
+        ? map['itemProgress']
+        : double.parse(map['itemProgress']);
     return taskDetailBean;
   }
 
   static List<TaskDetailBean> fromMapList(dynamic mapList) {
-    List<TaskDetailBean> list = List.filled(mapList.length, null);
+    List<TaskDetailBean> list = List.filled(mapList.length, TaskDetailBean());
     for (int i = 0; i < mapList.length; i++) {
       list[i] = fromMap(mapList[i]);
     }

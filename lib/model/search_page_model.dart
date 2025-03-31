@@ -3,13 +3,11 @@ import 'package:todo_list/config/api_service.dart';
 import 'package:todo_list/json/task_bean.dart';
 import 'package:todo_list/logic/search_page_logic.dart';
 import 'package:todo_list/model/all_model.dart';
-import 'package:todo_list/widgets/loading_widget.dart';
 
-class SearchPageModel extends ChangeNotifier{
-
-  BuildContext context;
-  SearchPageLogic logic;
-  GlobalModel _globalModel;
+class SearchPageModel extends ChangeNotifier {
+  late BuildContext context;
+  late SearchPageLogic logic;
+  late GlobalModel _globalModel;
 
   List<TaskBean> searchTasks = [];
   final TextEditingController textEditingController = TextEditingController();
@@ -20,30 +18,28 @@ class SearchPageModel extends ChangeNotifier{
 
   CancelToken cancelToken = CancelToken();
 
-
-  SearchPageModel(){
+  SearchPageModel() {
     logic = SearchPageLogic(this);
   }
 
-  void setContext(BuildContext context, GlobalModel globalModel){
-    if(this.context == null){
+  void setContext(BuildContext context, GlobalModel globalModel) {
+    if (this.context == null) {
       this.context = context;
       this._globalModel = globalModel;
       debugPrint("设置global");
     }
   }
 
-
   @override
-  void dispose(){
+  void dispose() {
     textEditingController?.dispose();
-    if(!cancelToken.isCancelled) cancelToken.cancel();
+    if (!cancelToken.isCancelled) cancelToken.cancel();
     super.dispose();
-    _globalModel.searchPageModel = null;
+    _globalModel.searchPageModel.dispose();
     debugPrint("SearchPageModel销毁了");
   }
 
-  void refresh(){
+  void refresh() {
     notifyListeners();
   }
 }

@@ -1,19 +1,24 @@
 import 'dart:math';
 
+import 'package:circle_list/circle_list.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list/config/provider_config.dart';
+import 'package:todo_list/json/task_bean.dart';
 import 'package:todo_list/json/task_icon_bean.dart';
 import 'package:todo_list/model/global_model.dart';
-import 'package:circle_list/circle_list.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:todo_list/pages/navigator/settings/setting_page.dart';
 
 class BottomShowWidget extends StatefulWidget {
-  final VoidCallback onExit;
-  final List<TaskIconBean> taskIconBeans;
+  final VoidCallback? onExit;
+  late List<TaskIconBean>? taskIconBeans;
 
-  BottomShowWidget({this.onExit, this.taskIconBeans});
+  BottomShowWidget({this.onExit, this.taskIconBeans}) {
+    if (taskIconBeans == null) {
+      taskIconBeans = [];
+    }
+  }
 
   @override
   _BottomShowWidgetState createState() => _BottomShowWidgetState();
@@ -21,8 +26,8 @@ class BottomShowWidget extends StatefulWidget {
 
 class _BottomShowWidgetState extends State<BottomShowWidget>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation<double> _animation;
+  late AnimationController _controller;
+  late Animation<double> _animation;
   List<TaskIconBean> _children = [];
 
   @override
@@ -33,7 +38,7 @@ class _BottomShowWidgetState extends State<BottomShowWidget>
         CurvedAnimation(parent: _controller, curve: Curves.easeInOutSine));
     _controller.forward();
     _children.clear();
-    _children.addAll(widget.taskIconBeans);
+    _children.addAll(widget.taskIconBeans ?? []);
     super.initState();
   }
 
@@ -84,7 +89,8 @@ class _BottomShowWidgetState extends State<BottomShowWidget>
                       ),
                       builder: (ctx, child) {
                         return Transform.scale(
-                          scale: (max(size.height, size.width) / 28) * (_animation.value),
+                          scale: (max(size.height, size.width) / 28) *
+                              (_animation.value),
                           child: child,
                         );
                       }),
@@ -106,7 +112,8 @@ class _BottomShowWidgetState extends State<BottomShowWidget>
                                 builder: (ctx) {
                                   return ProviderConfig.getInstance()
                                       .getEditTaskPage(
-                                    _children[index],
+                                    taskIcon: _children[index],
+                                    taskBean: TaskBean(),
                                   );
                                 },
                               ),
@@ -114,9 +121,10 @@ class _BottomShowWidgetState extends State<BottomShowWidget>
                           },
                           tooltip: _children[index].taskName,
                           icon: Icon(
-                            IconBean.fromBean(_children[index].iconBean),
+                            IconBean.fromBean(_children[index].iconBean!),
                             size: 40,
-                            color: ColorBean.fromBean(_children[index].colorBean),
+                            color:
+                                ColorBean.fromBean(_children[index].colorBean!),
                           ),
                         );
                       }),
@@ -125,9 +133,12 @@ class _BottomShowWidgetState extends State<BottomShowWidget>
                       innerCircleRotateWithChildren: true,
                       centerWidget: GestureDetector(
                           onTap: () {
-                            showModalBottomSheet(context: context, builder: (ctx){
-                              return buildSettingListView(context, globalModel);
-                            }).then((v){
+                            showModalBottomSheet(
+                                context: context,
+                                builder: (ctx) {
+                                  return buildSettingListView(
+                                      context, globalModel);
+                                }).then((v) {
                               doExit(context, _controller);
                             });
                             debugPrint("点击");
@@ -151,12 +162,16 @@ class _BottomShowWidgetState extends State<BottomShowWidget>
                     ),
                     builder: (ctx, child) {
                       return Transform.translate(
-                          offset: Offset(
-                              0,
-                              MediaQuery.of(context).size.height -
-                                  (_animation.value) * circleSize),
-                          child: Transform.scale(
-                              scale: _animation.value, child: child));
+                        offset: Offset(
+                          0,
+                          MediaQuery.of(context).size.height -
+                              (_animation.value) * circleSize,
+                        ),
+                        child: Transform.scale(
+                          scale: _animation.value,
+                          child: child,
+                        ),
+                      );
                     },
                   ),
                 ),
@@ -168,8 +183,8 @@ class _BottomShowWidgetState extends State<BottomShowWidget>
     );
   }
 
-  Future doExit(BuildContext context, AnimationController controller) async{
-    widget?.onExit();
+  Future doExit(BuildContext context, AnimationController controller) async {
+    widget.onExit!();
     await controller.reverse();
     Navigator.of(context).pop();
   }

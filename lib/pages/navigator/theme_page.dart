@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:todo_list/i10n/localization_intl.dart';
 import 'package:todo_list/model/global_model.dart';
 import 'package:todo_list/model/theme_page_model.dart';
-
 import 'package:todo_list/widgets/custom_animated_switcher.dart';
 
 class ThemePage extends StatelessWidget {
@@ -39,6 +38,7 @@ class ThemePage extends StatelessWidget {
                     model.isDeleting = !model.isDeleting;
                     model.refresh();
                   },
+                  key: GlobalKey(),
                 )
               : SizedBox(),
         ],

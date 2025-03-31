@@ -5,8 +5,8 @@ import 'package:todo_list/widgets/net_loading_widget.dart';
 
 class FeedbackPageModel extends ChangeNotifier{
 
-  FeedbackPageLogic logic;
-  BuildContext context;
+  late FeedbackPageLogic logic;
+  late BuildContext context;
   final LoadingController loadingController = LoadingController();
 
   int currentSelectSvg = -99;

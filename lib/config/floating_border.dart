@@ -9,16 +9,18 @@ class FloatingBorder extends ShapeBorder {
   EdgeInsetsGeometry get dimensions => EdgeInsets.only();
 
   @override
-  Path getInnerPath(Rect rect, {TextDirection textDirection}) {
+  Path getInnerPath(Rect rect, {TextDirection? textDirection}) {
     return getOuterPath(rect, textDirection: textDirection);
   }
 
   @override
-  Path getOuterPath(Rect rect, {TextDirection textDirection}) {
+  Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
     ///正六边形中心
     Offset center = rect.center;
+
     ///正六边形边长
     double length = rect.width / 2;
+
     ///正六边形以最左为起点，顺时针六个点的坐标
     Point one = Point(center.dx - length, center.dy);
     Point two = Point(length / 2 + one.x, center.dy - ((sqrt(3) / 2) * length));
@@ -31,12 +33,11 @@ class FloatingBorder extends ShapeBorder {
   }
 
   @override
-  void paint(Canvas canvas, Rect rect, {TextDirection textDirection}) {
-  }
+  void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {}
 
   @override
   ShapeBorder scale(double t) {
-    return null;
+    return FloatingBorder();
   }
 
   Path _drawRoundPolygon(List<Point> ps, double distance) {
@@ -44,16 +45,16 @@ class FloatingBorder extends ShapeBorder {
     ps.add(ps[0]);
     ps.add(ps[1]);
     var p0 = LineInterCircle.intersectionPoint(ps[1], ps[0], distance);
-    path.moveTo(p0.x, p0.y);
+    path.moveTo(p0.x as double, p0.y as double);
     for (int i = 0; i < ps.length - 2; i++) {
       var p1 = ps[i];
       var p2 = ps[i + 1];
       var p3 = ps[i + 2];
       var interP1 = LineInterCircle.intersectionPoint(p1, p2, distance);
       var interP2 = LineInterCircle.intersectionPoint(p3, p2, distance);
-      path.lineTo(interP1.x, interP1.y);
+      path.lineTo(interP1.x as double, interP1.y as double);
       path.arcToPoint(
-        Offset(interP2.x, interP2.y),
+        Offset(interP2.x as double, interP2.y as double),
         radius: Radius.circular(distance * 6),
       );
     }

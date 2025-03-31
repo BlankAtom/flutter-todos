@@ -3,8 +3,8 @@ import 'package:todo_list/json/task_icon_bean.dart';
 import 'package:todo_list/logic/all_logic.dart';
 
 class IconSettingPageModel extends ChangeNotifier {
-  IconSettingPageLogic logic;
-  BuildContext context;
+  late IconSettingPageLogic logic;
+  late BuildContext context;
 
   ///当前已经选择出来的icon图标
   List<TaskIconBean> taskIcons = [];
@@ -16,7 +16,6 @@ class IconSettingPageModel extends ChangeNotifier {
   List<IconBean> searchIcons = [];
   TextEditingController textEditingController = TextEditingController();
   FocusNode focusNode = FocusNode();
-
 
   Color currentPickerColor = Colors.black;
   String currentIconName = "";

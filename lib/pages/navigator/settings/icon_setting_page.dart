@@ -14,15 +14,19 @@ class IconSettingPage extends StatelessWidget {
     final globalModel = Provider.of<GlobalModel>(context);
 
     return Scaffold(
-      appBar: model.isSearching ? model.logic.getSearchBar(globalModel) : AppBar(
-        title: Text(IntlLocalizations.of(context).iconSetting),
-        actions: <Widget>[
-          IconButton(icon: Icon(Icons.search), onPressed: () {
-            model.isSearching = true;
-            model.refresh();
-          })
-        ],
-      ),
+      appBar: model.isSearching
+          ? model.logic.getSearchBar(globalModel)
+          : AppBar(
+              title: Text(IntlLocalizations.of(context).iconSetting),
+              actions: <Widget>[
+                IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () {
+                      model.isSearching = true;
+                      model.refresh();
+                    })
+              ],
+            ),
       body: Container(
           child: Column(
         children: <Widget>[
@@ -39,6 +43,7 @@ class IconSettingPage extends StatelessWidget {
                 child: Container(
                   child: model.taskIcons.length > 6
                       ? CustomAnimatedSwitcher(
+                    key: GlobalKey(),
                           firstChild: Icon(
                             Icons.border_color,
                             size: 20,
@@ -82,18 +87,17 @@ class IconSettingPage extends StatelessWidget {
                             children: <Widget>[
                               InkWell(
                                   child: Icon(
-                                    IconBean.fromBean(taskIcon.iconBean),
+                                    IconBean.fromBean(taskIcon.iconBean!),
                                     color:
-                                        ColorBean.fromBean(taskIcon.colorBean),
+                                        ColorBean.fromBean(taskIcon.colorBean!),
                                     size: 40,
                                   ),
                                   onTap: () {
-
                                     model.logic.onIconPress(
-                                      model.taskIcons[index].iconBean,
+                                      model.taskIcons[index].iconBean!,
                                       colorBean:
                                           model.taskIcons[index].colorBean,
-                                      name: model.taskIcons[index].taskName,
+                                      name: model.taskIcons[index].taskName!,
                                       index: index,
                                       isEdit: true,
                                     );
@@ -102,7 +106,7 @@ class IconSettingPage extends StatelessWidget {
                                 height: 2,
                               ),
                               Text(
-                                taskIcon.taskName,
+                                taskIcon.taskName!,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(fontSize: 12),
                               )
@@ -139,9 +143,8 @@ class IconSettingPage extends StatelessWidget {
           ),
           Expanded(
             child: Container(
-              alignment: Alignment.center,
-              child: model.logic.getIconsWidget()
-            ),
+                alignment: Alignment.center,
+                child: model.logic.getIconsWidget()),
           )
         ],
       )),

@@ -4,8 +4,8 @@ import 'package:todo_list/logic/all_logic.dart';
 
 class ThemePageModel extends ChangeNotifier{
 
-  ThemePageLogic logic;
-  BuildContext context;
+  late ThemePageLogic logic;
+  late BuildContext context;
   Color customColor = Colors.black;
 
   List<ThemeBean> themes = [];

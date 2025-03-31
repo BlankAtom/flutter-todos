@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class TopAnimationShowWidget extends StatefulWidget {
-  final Widget child;
-  final Duration duration;
+  final Widget? child;
+  final Duration? duration;
   final double distanceY;
 
   TopAnimationShowWidget({this.child, this.duration, this.distanceY = 0})
@@ -14,15 +14,15 @@ class TopAnimationShowWidget extends StatefulWidget {
 
 class _TopAnimationShowWidgetState extends State<TopAnimationShowWidget>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation<double> _animation;
+  late AnimationController _controller;
+  late Animation<double> _animation;
 
   @override
   void initState() {
     _controller = AnimationController(
         vsync: this, duration: widget.duration ?? Duration(seconds: 1));
-    _animation = new Tween(begin: 0.0, end: 1.0)
-        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    _animation = new Tween(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
     _controller.forward();
     super.initState();
   }
@@ -36,7 +36,6 @@ class _TopAnimationShowWidgetState extends State<TopAnimationShowWidget>
 
   @override
   Widget build(BuildContext context) {
-
     return AnimatedBuilder(
       animation: _animation,
       child: Container(child: widget.child),

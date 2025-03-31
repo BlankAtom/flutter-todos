@@ -1,20 +1,21 @@
 import 'dart:math';
-import 'package:todo_list/config/custom_image_cache_manager.dart';
-import 'package:todo_list/widgets/custom_cache_image.dart';
 
-import '../main/background/image_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list/config/all_types.dart';
+import 'package:todo_list/config/custom_image_cache_manager.dart';
 import 'package:todo_list/config/provider_config.dart';
 import 'package:todo_list/i10n/localization_intl.dart';
 import 'package:todo_list/model/global_model.dart';
 import 'package:todo_list/pages/navigator/language_page.dart';
 import 'package:todo_list/pages/navigator/settings/setting_page.dart';
 import 'package:todo_list/utils/shared_util.dart';
+import 'package:todo_list/widgets/custom_cache_image.dart';
 import 'package:todo_list/widgets/nav_head.dart';
 import 'package:todo_list/widgets/weather_widget.dart';
+
+import '../main/background/image_page.dart';
 
 class NavPage extends StatelessWidget {
   @override
@@ -28,6 +29,7 @@ class NavPage extends StatelessWidget {
         globalModel.enableWeatherShow
             ? WeatherWidget(
                 globalModel: globalModel,
+                key: GlobalKey(),
               )
             : SizedBox(),
         ListTile(
@@ -118,11 +120,16 @@ class NavPage extends StatelessWidget {
           }));
         },
         child: Hero(
-            tag: "tag_0",
-            child: Container(
-              height: netImageHeight,
-              child: CustomCacheImage(url: isDailyPic ? NavHeadType.DAILY_PIC_URL : url,cacheManager: isDailyPic ? CustomCacheManager():null,)
-            )),
+          tag: "tag_0",
+          child: Container(
+            height: netImageHeight,
+            child: CustomCacheImage(
+              url: isDailyPic ? NavHeadType.DAILY_PIC_URL : url,
+              cacheManager: isDailyPic ? CustomCacheManager() : null,
+              key: GlobalKey(),
+            ),
+          ),
+        ),
       );
     }
   }

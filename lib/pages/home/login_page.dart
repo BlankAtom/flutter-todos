@@ -1,7 +1,7 @@
-import 'dart:ui';
 import 'dart:io';
-import 'package:flutter/material.dart';
+
 import 'package:flare_flutter/flare_actor.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list/i10n/localization_intl.dart';
 import 'package:todo_list/json/color_bean.dart';
@@ -20,7 +20,7 @@ class LoginPage extends StatelessWidget {
     bool isDartNow =
         globalModel.currentThemeBean.themeType == MyTheme.darkTheme;
     final iconColor = isDartNow
-        ? ColorBean.fromBean(globalModel.currentThemeBean.colorBean)
+        ? ColorBean.fromBean(globalModel.currentThemeBean.colorBean!)
         : Theme.of(context).primaryColor;
 
     return Scaffold(
@@ -35,9 +35,10 @@ class LoginPage extends StatelessWidget {
         leading: model.isFirst
             ? Container()
             : IconButton(
-                icon: Icon(Platform.isAndroid
-                    ? Icons.arrow_back
-                    : Icons.arrow_back_ios, color: iconColor,),
+                icon: Icon(
+                  Platform.isAndroid ? Icons.arrow_back : Icons.arrow_back_ios,
+                  color: iconColor,
+                ),
                 onPressed: model.logic.onExit,
               ),
       ),
@@ -59,6 +60,7 @@ class LoginPage extends StatelessWidget {
           model.showLoginWidget
               ? LoginWidget(
                   loginPageModel: model,
+                  key: GlobalKey(),
                 )
               : Container(),
         ],

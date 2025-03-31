@@ -6,13 +6,13 @@ import 'package:todo_list/model/all_model.dart';
 import 'package:todo_list/pages/all_page.dart';
 
 class ProviderConfig {
-  static ProviderConfig _instance;
+  static ProviderConfig? _instance;
 
   static ProviderConfig getInstance() {
     if (_instance == null) {
       _instance = ProviderConfig._internal();
     }
-    return _instance;
+    return _instance!;
   }
 
   ProviderConfig._internal();
@@ -37,29 +37,30 @@ class ProviderConfig {
   ChangeNotifierProvider<TaskDetailPageModel> getTaskDetailPage(
     int index,
     TaskBean taskBean, {
-    DoneTaskPageModel doneTaskPageModel,
-    SearchPageModel searchPageModel,
+    DoneTaskPageModel? doneTaskPageModel,
+    SearchPageModel? searchPageModel,
   }) {
     return ChangeNotifierProvider<TaskDetailPageModel>(
       create: (context) => TaskDetailPageModel(
         taskBean,
+        heroTag: index,
         doneTaskPageModel: doneTaskPageModel,
         searchPageModel: searchPageModel,
-        heroTag: index,
       ),
       child: TaskDetailPage(),
     );
   }
 
   ///任务编辑页provider
-  ChangeNotifierProvider<EditTaskPageModel> getEditTaskPage(
-      TaskIconBean taskIcon,
-      {TaskDetailPageModel taskDetailPageModel,
-      TaskBean taskBean}) {
+  ChangeNotifierProvider<EditTaskPageModel> getEditTaskPage({
+    TaskIconBean? taskIcon,
+    TaskDetailPageModel? taskDetailPageModel,
+    required TaskBean taskBean,
+  }) {
     return ChangeNotifierProvider<EditTaskPageModel>(
       create: (context) => EditTaskPageModel(oldTaskBean: taskBean),
       child: EditTaskPage(
-        taskIcon,
+        taskIcon ?? taskBean.taskIconBean!,
         taskDetailPageModel: taskDetailPageModel,
       ),
     );
@@ -83,11 +84,12 @@ class ProviderConfig {
 
   ///头像裁剪页provider
   ChangeNotifierProvider<AvatarPageModel> getAvatarPage(
-      {MainPageModel mainPageModel}) {
+      {required MainPageModel mainPageModel}) {
     return ChangeNotifierProvider<AvatarPageModel>(
       create: (context) => AvatarPageModel(),
       child: AvatarPage(
         mainPageModel: mainPageModel,
+        key: GlobalKey(),
       ),
     );
   }
@@ -151,10 +153,11 @@ class ProviderConfig {
   }
 
   ///网络图片页provider，用于设置账号页面的背景，或者侧滑栏的头部,或者主页背景
-  ChangeNotifierProvider<NetPicturesPageModel> getNetPicturesPage(
-      {@required String useType,
-      AccountPageModel accountPageModel,
-      TaskBean taskBean}) {
+  ChangeNotifierProvider<NetPicturesPageModel> getNetPicturesPage({
+    required String useType,
+    AccountPageModel? accountPageModel,
+    TaskBean? taskBean,
+  }) {
     return ChangeNotifierProvider<NetPicturesPageModel>(
       create: (context) => NetPicturesPageModel(
         useType: useType,

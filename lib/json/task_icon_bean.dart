@@ -1,13 +1,15 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:todo_list/json/color_bean.dart';
+
 export 'package:todo_list/json/color_bean.dart';
 
 class TaskIconBean {
-  String taskName;
-  IconBean iconBean;
-  ColorBean colorBean;
+  late String? taskName;
+  late IconBean? iconBean;
+  ColorBean? colorBean;
 
   TaskIconBean({this.taskName, this.iconBean, this.colorBean});
 
@@ -20,7 +22,7 @@ class TaskIconBean {
   }
 
   static List<TaskIconBean> fromMapList(dynamic mapList) {
-    List<TaskIconBean> list = List.filled(mapList.length, null);
+    List<TaskIconBean> list = List.filled(mapList.length, TaskIconBean());
     for (int i = 0; i < mapList.length; i++) {
       list[i] = fromMap(mapList[i]);
     }
@@ -30,32 +32,36 @@ class TaskIconBean {
   Map<dynamic, dynamic> toMap() {
     return {
       'taskName': taskName,
-      'iconBean': iconBean.toMap(),
-      'colorBean': colorBean.toMap()
+      'iconBean': iconBean?.toMap(),
+      'colorBean': colorBean?.toMap()
     };
   }
 }
 
 class IconBean {
-  int codePoint;
-  String fontFamily;
-  String fontPackage;
-  String iconName;
-  bool matchTextDirection;
+  late int codePoint;
+  late String? fontFamily;
+  late String? fontPackage;
+  late String? iconName;
+  late bool matchTextDirection;
 
   IconBean(
-      {this.codePoint,
+      {this.codePoint = 0,
       this.fontFamily,
       this.fontPackage,
       this.iconName,
-      this.matchTextDirection});
+      this.matchTextDirection = true});
 
-  static IconData fromBean(IconBean bean) => IconData(bean.codePoint,
-      fontFamily: bean.fontFamily,);
+  static IconData fromBean(IconBean bean) => IconData(
+        bean.codePoint,
+        fontFamily: bean.fontFamily,
+      );
 
   static IconBean fromMap(Map<String, dynamic> map) {
     IconBean bean = new IconBean();
-    bean.codePoint = map['codePoint'] is int ? map['codePoint'] : int.parse(map['codePoint']);
+    bean.codePoint = map['codePoint'] is int
+        ? map['codePoint']
+        : int.parse(map['codePoint']);
     bean.fontFamily = map['fontFamily'];
     bean.fontPackage = map['fontPackage'];
     bean.iconName = map['iconName'];
@@ -73,7 +79,7 @@ class IconBean {
   }
 
   static List<IconBean> fromMapList(dynamic mapList) {
-    List<IconBean> list = List.filled(mapList.length, null);
+    List<IconBean> list = List.filled(mapList.length, IconBean());
     for (int i = 0; i < mapList.length; i++) {
       list[i] = fromMap(mapList[i]);
     }

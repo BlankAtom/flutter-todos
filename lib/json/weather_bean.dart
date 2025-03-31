@@ -1,10 +1,9 @@
 class WeatherBean {
-
   //{"HeWeather6":[{"basic":{"cid":"TR3487004","location":"Akrotiri","parent_city":"Akrotiri","admin_area":"亚克罗提利与德凯利亚","cnty":"英国","lat":"34.60100174","lon":"32.95600128","tz":"+3.00"},"update":{"loc":"2019-07-24 16:57","utc":"2019-07-24 13:57"},"status":"ok","now":{"cloud":"35","cond_code":"100","cond_txt":"晴","fl":"30","hum":"87","pcpn":"0.0","pres":"1005","tmp":"26","vis":"16","wind_deg":"271","wind_dir":"西风","wind_sc":"0","wind_spd":"1"}}]}
 
   //{"HeWeather6":[{"status":"unknown location"}]}错误时的
 
-  List<HeWeather6ListBean> heWeather6;
+  late List<HeWeather6ListBean> heWeather6;
 
   static WeatherBean fromMap(Map<String, dynamic> map) {
     WeatherBean weatherBean = new WeatherBean();
@@ -13,17 +12,15 @@ class WeatherBean {
   }
 
   static List<WeatherBean> fromMapList(dynamic mapList) {
-    List<WeatherBean> list = List.filled(mapList.length, null);
+    List<WeatherBean> list = List.filled(mapList.length, WeatherBean());
     for (int i = 0; i < mapList.length; i++) {
       list[i] = fromMap(mapList[i]);
     }
     return list;
   }
-
 }
 
 class HeWeather6ListBean {
-
   /*
    * status : "ok"
    * basic : {"cid":"TR3487004","location":"Akrotiri","parent_city":"Akrotiri","admin_area":"�ǿ���������¿�����","cnty":"Ӣ��","lat":"34.60100174","lon":"32.95600128","tz":"+3.00"}
@@ -31,10 +28,10 @@ class HeWeather6ListBean {
    * update : {"loc":"2019-07-24 16:57","utc":"2019-07-24 13:57"}
    */
 
-  String status;
-  BasicBean basic;
-  NowBean now;
-  UpdateBean update;
+  late String status;
+  late BasicBean basic;
+  late NowBean now;
+  late UpdateBean update;
 
   static HeWeather6ListBean fromMap(Map<String, dynamic> map) {
     HeWeather6ListBean heWeather6ListBean = new HeWeather6ListBean();
@@ -46,7 +43,8 @@ class HeWeather6ListBean {
   }
 
   static List<HeWeather6ListBean> fromMapList(dynamic mapList) {
-    List<HeWeather6ListBean> list = List.filled(mapList.length, null);
+    List<HeWeather6ListBean> list =
+        List.filled(mapList.length, HeWeather6ListBean());
     for (int i = 0; i < mapList.length; i++) {
       list[i] = fromMap(mapList[i]);
     }
@@ -55,7 +53,6 @@ class HeWeather6ListBean {
 }
 
 class BasicBean {
-
   /*
    * cid : "TR3487004"
    * location : "Akrotiri"
@@ -67,14 +64,14 @@ class BasicBean {
    * tz : "+3.00"
    */
 
-  String cid;
-  String location;
-  String parentCity;
-  String adminArea;
-  String cnty;
-  String lat;
-  String lon;
-  String tz;
+  late String cid;
+  late String location;
+  late String parentCity;
+  late String adminArea;
+  late String cnty;
+  late String lat;
+  late String lon;
+  late String tz;
 
   static BasicBean fromMap(Map<String, dynamic> map) {
     BasicBean basicBean = new BasicBean();
@@ -90,7 +87,7 @@ class BasicBean {
   }
 
   static List<BasicBean> fromMapList(dynamic mapList) {
-    List<BasicBean> list = List.filled(mapList.length, null);
+    List<BasicBean> list = List.filled(mapList.length, BasicBean());
     for (int i = 0; i < mapList.length; i++) {
       list[i] = fromMap(mapList[i]);
     }
@@ -99,7 +96,6 @@ class BasicBean {
 }
 
 class NowBean {
-
   /*
    * cloud : "35"
    * cond_code : "100"
@@ -116,19 +112,19 @@ class NowBean {
    * wind_spd : "1"
    */
 
-  String cloud;
-  String condCode;
-  String condTxt;
-  String fl;
-  String hum;
-  String pcpn;
-  String pres;
-  String tmp;
-  String vis;
-  String windDeg;
-  String windDir;
-  String windSc;
-  String windSpd;
+  late String cloud;
+  late String condCode;
+  late String condTxt;
+  late String fl;
+  late String hum;
+  late String pcpn;
+  late String pres;
+  late String tmp;
+  late String vis;
+  late String windDeg;
+  late String windDir;
+  late String windSc;
+  late String windSpd;
 
   static NowBean fromMap(Map<String, dynamic> map) {
     NowBean nowBean = new NowBean();
@@ -149,7 +145,7 @@ class NowBean {
   }
 
   static List<NowBean> fromMapList(dynamic mapList) {
-    List<NowBean> list = List.filled(mapList.length, null);
+    List<NowBean> list = List.filled(mapList.length, NowBean());
     for (int i = 0; i < mapList.length; i++) {
       list[i] = fromMap(mapList[i]);
     }
@@ -158,14 +154,13 @@ class NowBean {
 }
 
 class UpdateBean {
-
   /*
    * loc : "2019-07-24 16:57"
    * utc : "2019-07-24 13:57"
    */
 
-  String loc;
-  String utc;
+  late String loc;
+  late String utc;
 
   static UpdateBean fromMap(Map<String, dynamic> map) {
     UpdateBean updateBean = new UpdateBean();
@@ -175,7 +170,7 @@ class UpdateBean {
   }
 
   static List<UpdateBean> fromMapList(dynamic mapList) {
-    List<UpdateBean> list = List.filled(mapList.length, null);
+    List<UpdateBean> list = List.filled(mapList.length, UpdateBean());
     for (int i = 0; i < mapList.length; i++) {
       list[i] = fromMap(mapList[i]);
     }

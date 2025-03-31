@@ -36,13 +36,13 @@ class ShowAnimateWidget extends StatefulWidget {
 
 class _ShowAnimateWidgetState extends State<ShowAnimateWidget>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation<double> _animation;
+  late AnimationController _controller;
+  late Animation<double> _animation;
 
   @override
   void initState() {
-    _controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 1500));
+    _controller = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 1500));
     _animation = new Tween(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
     _controller.forward();
@@ -81,14 +81,15 @@ class _ShowAnimateWidgetState extends State<ShowAnimateWidget>
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: 4,
-        itemBuilder: (ctx, index){
-          return _getAnimate(icons[index], _animation,context,4);
+        itemBuilder: (ctx, index) {
+          return _getAnimate(icons[index], _animation, context, 4);
         },
       ),
     );
   }
 
-  Widget _getAnimate(Widget child, Animation animation, BuildContext context, int length) {
+  Widget _getAnimate(
+      Widget child, Animation animation, BuildContext context, int length) {
     final size = MediaQuery.of(context).size;
     return Container(
       width: length >= 4 ? (size.width / 4) : (size.width / length),
@@ -96,7 +97,7 @@ class _ShowAnimateWidgetState extends State<ShowAnimateWidget>
       child: AnimatedBuilder(
         animation: animation,
         child: child,
-        builder: (ctx, child){
+        builder: (ctx, child) {
           return Transform.scale(
             scale: animation.value,
             child: child,

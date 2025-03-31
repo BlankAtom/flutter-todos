@@ -5,21 +5,29 @@ import 'package:todo_list/i10n/localization_intl.dart';
 import 'loading_widget.dart';
 
 class NetLoadingWidget extends StatefulWidget {
-  final LoadingController loadingController;
-  final Widget successWidget;
-  final String loadingText;
-  final String errorText;
-  final String successText;
-  final String emptyText;
-  final String idleText;
-  final VoidCallback onRequest;
-  final VoidCallback onSuccess;
-  final CancelToken cancelToken;
+  final LoadingController? loadingController;
+  final Widget? successWidget;
+  final String? loadingText;
+  final String? errorText;
+  final String? successText;
+  final String? emptyText;
+  final String? idleText;
+  final VoidCallback? onRequest;
+  final VoidCallback? onSuccess;
+  final CancelToken? cancelToken;
 
   const NetLoadingWidget({
-    Key key,
+    required Key key,
     this.loadingController,
-    this.successWidget, this.loadingText, this.errorText, this.successText, this.emptyText, this.idleText, this.onRequest, this.cancelToken, this.onSuccess,
+    this.successWidget,
+    this.loadingText,
+    this.errorText,
+    this.successText,
+    this.emptyText,
+    this.idleText,
+    this.onRequest,
+    this.cancelToken,
+    this.onSuccess,
   }) : super(key: key);
 
   @override
@@ -34,7 +42,7 @@ class _NetLoadingWidgetState extends State<NetLoadingWidget> {
     final size = MediaQuery.of(context).size;
 
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         Navigator.pop(context);
       },
       child: Scaffold(
@@ -55,32 +63,44 @@ class _NetLoadingWidgetState extends State<NetLoadingWidget> {
                 loadingText: getLoadingText(),
                 successWidget: Container(
                   margin: EdgeInsets.all(10),
-                  child: widget.successWidget ?? Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
+                  child: widget.successWidget ??
                       Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
-                          Text(
-                            widget.successText ?? "",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 30),
+                          Column(
+                            children: <Widget>[
+                              Text(
+                                widget.successText ?? "",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 30),
+                              ),
+                            ],
                           ),
+                          TextButton(
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStateProperty.all(
+                                  Theme.of(context).primaryColor),
+                              foregroundColor:
+                                  WidgetStateProperty.all(Colors.white),
+                              overlayColor:
+                                  WidgetStateProperty.resolveWith((states) {
+                                if (states.contains(WidgetState.pressed)) {
+                                  return Theme.of(context).primaryColorLight;
+                                }
+                                return null;
+                              }),
+                              shape: WidgetStateProperty.all(
+                                  RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(20.0))),
+                            ),
+                            onPressed: widget.onSuccess ?? () {},
+                            child: Text(IntlLocalizations.of(context).ok),
+                          )
                         ],
                       ),
-                      FlatButton(
-                        color: Theme.of(context).primaryColor,
-                        highlightColor: Theme.of(context).primaryColorLight,
-                        colorBrightness: Brightness.dark,
-                        splashColor: Theme.of(context).primaryColorDark,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0)),
-                        onPressed: widget.onSuccess ?? (){},
-                        child: Text(IntlLocalizations.of(context).ok),
-                      )
-                    ],
-                  ),
                 ),
-                errorCallBack: widget.onRequest ?? (){},
+                errorCallBack: widget.onRequest ?? () {},
                 errorText: getLoadingText(),
               ),
             ),
@@ -90,21 +110,18 @@ class _NetLoadingWidgetState extends State<NetLoadingWidget> {
     );
   }
 
-
-
   @override
   void initState() {
     super.initState();
     widget?.loadingController?._setState(this);
-    if(widget.onRequest != null){
-      widget.onRequest();
+    if (widget.onRequest != null) {
+      widget.onRequest!();
     }
   }
 
-  void refresh(){
-    if(mounted) setState(() {});
+  void refresh() {
+    if (mounted) setState(() {});
   }
-
 
   @override
   void dispose() {
@@ -121,22 +138,23 @@ class _NetLoadingWidgetState extends State<NetLoadingWidget> {
         return widget.errorText ?? IntlLocalizations.of(context).submitAgain;
         break;
       case LoadingFlag.success:
-        return widget.successText ?? IntlLocalizations.of(context).submitSuccess;
+        return widget.successText ??
+            IntlLocalizations.of(context).submitSuccess;
         break;
       case LoadingFlag.empty:
-        return widget.emptyText ??  "";
+        return widget.emptyText ?? "";
         break;
       case LoadingFlag.idle:
         return widget.idleText ?? "";
         break;
     }
-  return "";
+    return "";
   }
 }
 
 //这里面的state没有去执行dispose，不知道会不会内存泄漏
 class LoadingController {
-  _NetLoadingWidgetState _state;
+  late _NetLoadingWidgetState _state;
   LoadingFlag _flag = LoadingFlag.loading;
 
   void setFlag(LoadingFlag loadingFlag) {
@@ -147,16 +165,9 @@ class LoadingController {
   }
 
   void _setState(_NetLoadingWidgetState state) {
-    if (this?._state == null) {
-      this?._state = state;
-    } else {
-      this._state = null;
-      this._state = state;
-    }
+    this._state = state;
     print("设置了:${this._state}");
   }
 
   LoadingFlag get flag => _flag;
-
-
 }

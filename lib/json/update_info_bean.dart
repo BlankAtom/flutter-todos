@@ -1,5 +1,4 @@
 class UpdateInfoBean {
-
   /*
    * appVersion : "1.0.0"
    * appName : "无"
@@ -8,11 +7,11 @@ class UpdateInfoBean {
    * appId : "001"
    */
 
-  String appVersion;
-  String appName;
-  String updateInfo;
-  String downloadUrl;
-  String appId;
+  late String appVersion;
+  late String appName;
+  late String updateInfo;
+  late String downloadUrl;
+  late String appId;
 
   static UpdateInfoBean fromMap(Map<String, dynamic> map) {
     UpdateInfoBean updateInfoBean = new UpdateInfoBean();
@@ -25,14 +24,14 @@ class UpdateInfoBean {
   }
 
   static List<UpdateInfoBean> fromMapList(dynamic mapList) {
-    List<UpdateInfoBean> list = List.filled(mapList.length, null);
+    List<UpdateInfoBean> list = List.filled(mapList.length, UpdateInfoBean());
     for (int i = 0; i < mapList.length; i++) {
       list[i] = fromMap(mapList[i]);
     }
     return list;
   }
 
-  static  bool needUpdate(String oldVersion, String newVersion){
+  static bool needUpdate(String oldVersion, String newVersion) {
     final oldList = oldVersion.split(".");
     final newList = newVersion.split(".");
 
@@ -43,15 +42,13 @@ class UpdateInfoBean {
       String newNumString = newList[i];
       int oldNum = int.parse(oldNumString);
       int newNum = int.parse(newNumString);
-      if(newNum > oldNum){
+      if (newNum > oldNum) {
         needUpdate = true;
         return needUpdate;
-      } else if(oldNum > newNum){
+      } else if (oldNum > newNum) {
         return false;
       }
     }
     return needUpdate;
-
   }
-
 }

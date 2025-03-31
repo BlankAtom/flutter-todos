@@ -1,29 +1,26 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:package_info/package_info.dart';
 import 'package:todo_list/config/all_types.dart';
 import 'package:todo_list/config/api_service.dart';
-import 'package:todo_list/config/api_strategy.dart';
 import 'package:todo_list/config/provider_config.dart';
 import 'package:todo_list/database/database.dart';
 import 'package:todo_list/i10n/localization_intl.dart';
 import 'package:todo_list/items/task_item.dart';
 import 'package:todo_list/json/color_bean.dart';
-import 'package:todo_list/json/common_bean.dart';
 import 'package:todo_list/json/task_bean.dart';
-import 'package:todo_list/json/update_info_bean.dart';
 import 'package:todo_list/model/all_model.dart';
 import 'package:todo_list/utils/file_util.dart';
 import 'package:todo_list/utils/shared_util.dart';
 import 'package:todo_list/utils/theme_util.dart';
 import 'package:todo_list/widgets/edit_dialog.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:todo_list/widgets/net_loading_widget.dart';
 import 'package:todo_list/widgets/update_dialog.dart';
-import 'package:package_info/package_info.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class MainPageLogic {
   final MainPageModel _model;
@@ -45,7 +42,7 @@ class MainPageLogic {
                   title: Text(
                       "${IntlLocalizations.of(_model.context).doDelete}${taskBean.taskName}"),
                   actions: <Widget>[
-                    FlatButton(
+                    TextButton(
                         onPressed: () {
                           Navigator.of(context).pop();
                           _model.logic.deleteTask(taskBean);
@@ -54,7 +51,7 @@ class MainPageLogic {
                           IntlLocalizations.of(_model.context).delete,
                           style: TextStyle(color: Colors.redAccent),
                         )),
-                    FlatButton(
+                    TextButton(
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
@@ -68,7 +65,7 @@ class MainPageLogic {
         ),
         onTap: () {
           _model.currentTapIndex = index;
-          Future.delayed(Duration(milliseconds: 400), (){
+          Future.delayed(Duration(milliseconds: 400), () {
             _model.canHideWidget = true;
             _model.refresh();
           });
@@ -84,7 +81,11 @@ class MainPageLogic {
     });
   }
 
-  Widget getIconText({Icon icon, String text, VoidCallback onTap}) {
+  Widget getIconText({
+    required Icon icon,
+    required String text,
+    VoidCallback? onTap,
+  }) {
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -120,15 +121,17 @@ class MainPageLogic {
     _model.currentUserName = currentUserName;
   }
 
-  Future getCurrentTransparency() async{
-    final transparency = await SharedUtil.instance.getDouble(Keys.currentTransparency);
+  Future getCurrentTransparency() async {
+    final transparency =
+        await SharedUtil.instance.getDouble(Keys.currentTransparency);
     if (transparency == null) return;
     if (transparency == _model.currentTransparency) return;
     _model.currentTransparency = transparency;
   }
 
-  Future getEnableCardPageOpacity() async{
-    final enable = await SharedUtil.instance.getBoolean(Keys.enableCardPageOpacity);
+  Future getEnableCardPageOpacity() async {
+    final enable =
+        await SharedUtil.instance.getBoolean(Keys.enableCardPageOpacity);
     if (enable == null) return;
     _model.enableTaskPageOpacity = enable;
   }
@@ -142,11 +145,12 @@ class MainPageLogic {
     return enableBg
         ? BoxDecoration(
             image: DecorationImage(
-            image: bgUrl.startsWith('http')
-                ? CachedNetworkImageProvider(bgUrl)
-                : FileImage(File(bgUrl)),
-            fit: BoxFit.cover,
-          ))
+              image: bgUrl.startsWith('http')
+                  ? CachedNetworkImageProvider(bgUrl)
+                  : FileImage(File(bgUrl)) as ImageProvider,
+              fit: BoxFit.cover,
+            ),
+          )
         : BoxDecoration(
             gradient: isBgGradient
                 ? LinearGradient(
@@ -177,7 +181,7 @@ class MainPageLogic {
 
   Color _getBgColor(bool isBgGradient, bool isBgChangeWithCard) {
     if (isBgGradient) {
-      return null;
+      return Colors.white; // TODO: 这里可以使用默认颜色
     }
     final context = _model.context;
     final primaryColor = Theme.of(context).primaryColor;
@@ -191,7 +195,7 @@ class MainPageLogic {
     int taskLength = _model.tasks.length;
     if (taskLength == 0) return primaryColor;
     if (index > taskLength - 1) return primaryColor;
-    return ColorBean.fromBean(_model.tasks[index].taskIconBean.colorBean);
+    return ColorBean.fromBean(_model.tasks[index].taskIconBean!.colorBean!);
   }
 
   void deleteTask(TaskBean taskBean) async {
@@ -207,7 +211,9 @@ class MainPageLogic {
         showDialog(
             context: _model.context,
             builder: (ctx) {
-              return NetLoadingWidget();
+              return NetLoadingWidget(
+                key: GlobalKey(),
+              );
             });
         ApiService.instance.postDeleteTask(
           success: (CommonBean bean) {
@@ -227,9 +233,9 @@ class MainPageLogic {
             _showTextDialog(msg);
           },
           params: {
-            "token": token,
+            "token": token ?? 'None Token',
             "account": account,
-            "uniqueId": taskBean.uniqueId,
+            "uniqueId": taskBean.uniqueId!,
           },
           token: _model.cancelToken,
         );
@@ -249,8 +255,8 @@ class MainPageLogic {
     Navigator.of(_model.context).push(
       new CupertinoPageRoute(
         builder: (ctx) {
-          return ProviderConfig.getInstance()
-              .getEditTaskPage(taskBean.taskIconBean, taskBean: taskBean);
+          return ProviderConfig.getInstance().getEditTaskPage(
+              taskIcon: taskBean.taskIconBean!, taskBean: taskBean);
         },
       ),
     );
@@ -277,7 +283,6 @@ class MainPageLogic {
   ///无论是网络头像还是asset头像，最后将转换为本地文件头像
   Future getCurrentAvatar() async {
     switch (_model.currentAvatarType) {
-
       ///头像为默认头像的时候，将asset转换为file，方便imageCrop与之后的suggestion直接用到file
       case CurrentAvatarType.defaultAvatar:
         final path = await FileUtil.getInstance()
@@ -301,6 +306,7 @@ class MainPageLogic {
         break;
       case CurrentAvatarType.net:
         final net = await SharedUtil().getString(Keys.netAvatarPath);
+        if (net == null) break;
         FileUtil.getInstance().downloadFile(
           url: net,
           filePath: "/avatar/",
@@ -394,6 +400,7 @@ class MainPageLogic {
                 _changeUserName(account, _model.currentEditingUserName);
               }
             },
+            key: GlobalKey(),
           );
         });
   }
@@ -432,7 +439,11 @@ class MainPageLogic {
         Navigator.of(context).pop();
         _showTextDialog(commonBean.description);
       },
-      params: {"account": account, "token": token, "userName": userName},
+      params: {
+        "account": account,
+        "token": token ?? 'None Token',
+        "userName": userName,
+      },
       token: _model.cancelToken,
     );
   }
@@ -441,7 +452,9 @@ class MainPageLogic {
     showDialog(
         context: context,
         builder: (ctx) {
-          return NetLoadingWidget();
+          return NetLoadingWidget(
+            key: GlobalKey(),
+          );
         });
   }
 
@@ -507,7 +520,7 @@ class MainPageLogic {
         DBProvider.db.updateTask(taskBean);
       },
       taskBean: taskBean,
-      token: token,
+      token: token ?? 'None Token',
       cancelToken: _model.cancelToken,
     );
   }
@@ -517,7 +530,9 @@ class MainPageLogic {
     showDialog(
         context: _model.context,
         builder: (ctx) {
-          return NetLoadingWidget();
+          return NetLoadingWidget(
+            key: GlobalKey(),
+          );
         });
     final token = await SharedUtil.instance.getString(Keys.token);
     ApiService.instance.postCreateTask(
@@ -539,16 +554,20 @@ class MainPageLogic {
         DBProvider.db.updateTask(taskBean);
       },
       taskBean: taskBean,
-      token: token,
+      token: token ?? 'None Token',
       cancelToken: _model.cancelToken,
     );
   }
 
   void onBackGroundTap(GlobalModel globalModel) {
-    Navigator.of(_model.context).push(new CupertinoPageRoute(builder: (ctx) {
-      return ProviderConfig.getInstance().getNetPicturesPage(
-        useType: NetPicturesUseType.mainPageBackground,
-      );
-    }));
+    Navigator.of(_model.context).push(
+      new CupertinoPageRoute(
+        builder: (ctx) {
+          return ProviderConfig.getInstance().getNetPicturesPage(
+            useType: NetPicturesUseType.mainPageBackground,
+          );
+        },
+      ),
+    );
   }
 }

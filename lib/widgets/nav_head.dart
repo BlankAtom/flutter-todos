@@ -8,8 +8,8 @@ class NavHead extends StatefulWidget {
 }
 
 class _NavHeadState extends State<NavHead> with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation _animation;
+  late AnimationController _controller;
+  late Animation _animation;
 
   @override
   void initState() {
@@ -153,29 +153,31 @@ class _NavHeadState extends State<NavHead> with SingleTickerProviderStateMixin {
   BoxShadow getBackShadow(double circleOneRadius) {
     return BoxShadow(
       offset: Offset(0.0, circleOneRadius / 2),
-      color: Colors.black.withOpacity(0.8),
+      color: Colors.black.withAlpha((255 * 0.8).round()),
       blurRadius: circleOneRadius + 5,
       spreadRadius: -circleOneRadius / 2,
     );
   }
 
-  List<Color> getRandomColor(BuildContext context, {int times}) {
+  List<Color> getRandomColor(BuildContext context, {int? times}) {
     final List<Color> randomColorList = [
       Theme.of(context).primaryColor,
       Theme.of(context).primaryColorDark,
-      Colors.white.withOpacity(0.8)
+      Colors.white.withAlpha((255 * 0.8).round())
     ];
     List<Color> list = [];
     for (var i = 0; i < (times ?? randomColorList.length); ++i) {
       final randomNumber = Random().nextInt(randomColorList.length);
       list.add(randomColorList[randomNumber]);
     }
-    if (list.contains(Colors.white.withOpacity(0.8))) {
+    if (list.contains(Colors.white.withAlpha((255 * 0.8).round()))) {
       list.add(Theme.of(context).primaryColor);
       list.add(Theme.of(context).primaryColorDark);
     } else {
-      list.insert(Random().nextInt(randomColorList.length),
-          Colors.white.withOpacity(0.8));
+      list.insert(
+        Random().nextInt(randomColorList.length),
+        Colors.white.withAlpha((255 * 0.8).round()),
+      );
     }
     return list;
   }
@@ -205,7 +207,7 @@ class _NavHeadState extends State<NavHead> with SingleTickerProviderStateMixin {
             height: randomHeight,
             decoration: BoxDecoration(
                 borderRadius:
-                BorderRadius.all(Radius.circular(randomWidth / 2)),
+                    BorderRadius.all(Radius.circular(randomWidth / 2)),
                 gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -219,7 +221,6 @@ class _NavHeadState extends State<NavHead> with SingleTickerProviderStateMixin {
     return list;
   }
 }
-
 
 class CustomRect extends CustomClipper<Rect> {
   @override

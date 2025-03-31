@@ -7,7 +7,8 @@ import 'bottom_to_top_widget.dart';
 class LoginWidget extends StatelessWidget {
   final LoginPageModel loginPageModel;
 
-  const LoginWidget({Key key, @required this.loginPageModel}) : super(key: key);
+  const LoginWidget({required Key key, required this.loginPageModel})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +29,7 @@ class LoginWidget extends StatelessWidget {
                 BottomToTopWidget(
                   child: TextFormField(
                     validator: (email) =>
-                        loginPageModel.logic.validatorEmail(email),
+                        loginPageModel.logic.validatorEmail(email ?? ''),
                     keyboardType: TextInputType.text,
                     controller: loginPageModel.emailController,
                     textDirection: TextDirection.ltr,
@@ -49,11 +50,13 @@ class LoginWidget extends StatelessWidget {
                         )),
                   ),
                   index: 0,
+                  key: GlobalKey(),
                 ),
                 BottomToTopWidget(
+                  key: GlobalKey(),
                   child: TextFormField(
                     validator: (password) =>
-                        loginPageModel.logic.validatePassword(password),
+                        loginPageModel.logic.validatePassword(password ?? ''),
                     controller: loginPageModel.passwordController,
                     keyboardType: TextInputType.text,
                     textDirection: TextDirection.ltr,
@@ -65,11 +68,11 @@ class LoginWidget extends StatelessWidget {
                       prefixIcon: Icon(
                         Icons.lock,
                       ),
-
-                      suffixIcon: FlatButton(
-                        highlightColor: primaryColorLight,
-                        colorBrightness: Brightness.dark,
-                        splashColor: Colors.grey,
+                      suffixIcon: TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.grey,
+                          backgroundColor: primaryColorLight,
+                        ),
                         onPressed: loginPageModel.logic.onForget,
                         child: Text(
                           IntlLocalizations.of(context).forget,
@@ -86,15 +89,19 @@ class LoginWidget extends StatelessWidget {
                   height: 20,
                 ),
                 BottomToTopWidget(
+                  key: GlobalKey(),
                   index: 2,
                   child: Container(
                     height: 60,
                     width: size.width - 80,
-                    child: FlatButton(
-                      color: primaryColor,
-                      highlightColor: primaryColorLight,
-                      colorBrightness: Brightness.dark,
-                      splashColor: Colors.grey,
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: primaryColor,
+                        foregroundColor: Colors.white,
+                        minimumSize: Size(size.width - 80, 60),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(40.0)),
+                      ),
                       child: Text(
                         IntlLocalizations.of(context).logIn,
                         style: TextStyle(
@@ -103,8 +110,6 @@ class LoginWidget extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(40.0)),
                       onPressed: loginPageModel.logic.onLogin,
                     ),
                   ),
@@ -113,15 +118,20 @@ class LoginWidget extends StatelessWidget {
                   height: 20,
                 ),
                 BottomToTopWidget(
+                  key: GlobalKey(),
                   index: 2,
                   child: Container(
                     height: 60,
                     width: size.width - 80,
-                    child: FlatButton(
-                      color: primaryColor.withOpacity(0.3),
-                      highlightColor: primaryColorLight,
-                      colorBrightness: Brightness.dark,
-                      splashColor: Colors.grey,
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: primaryColor.withOpacity(0.3),
+                        foregroundColor: Colors.white,
+                        minimumSize: Size(size.width - 80, 60),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(40.0),
+                            side: BorderSide(color: primaryColorDark)),
+                      ),
                       child: Text(
                         IntlLocalizations.of(context).haveNoAccount,
                         style: TextStyle(
@@ -130,9 +140,6 @@ class LoginWidget extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(40.0),
-                          side: BorderSide(color: primaryColorDark)),
                       onPressed: loginPageModel.logic.onRegister,
                     ),
                   ),
@@ -140,18 +147,21 @@ class LoginWidget extends StatelessWidget {
                 SizedBox(
                   height: 20,
                 ),
-                loginPageModel.isFirst ? BottomToTopWidget(
-                    child: FlatButton(
-                      color: primaryColor,
-                      highlightColor: primaryColorLight,
-                      colorBrightness: Brightness.dark,
-                      splashColor: Colors.grey,
-                      child: Text(IntlLocalizations.of(context).skip),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0)),
-                      onPressed: loginPageModel.logic.onSkip,
-                    ),
-                    index: 3) : Container(),
+                loginPageModel.isFirst
+                    ? BottomToTopWidget(
+                        key: GlobalKey(),
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            backgroundColor: primaryColor,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0)),
+                          ),
+                          child: Text(IntlLocalizations.of(context).skip),
+                          onPressed: loginPageModel.logic.onSkip,
+                        ),
+                        index: 3)
+                    : Container(),
               ],
             ),
           ),

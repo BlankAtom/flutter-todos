@@ -7,9 +7,9 @@ import 'package:todo_list/widgets/popmenu_botton.dart';
 class TaskInfoWidget extends StatelessWidget {
   final int index;
   final double space;
-  final TaskBean taskBean;
-  final VoidCallback onDelete;
-  final VoidCallback onEdit;
+  final TaskBean? taskBean;
+  final VoidCallback? onDelete;
+  final VoidCallback? onEdit;
   final bool isCardChangeWithBg;
   final bool isExisting;
 
@@ -27,9 +27,9 @@ class TaskInfoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final iconColor = isCardChangeWithBg
         ? Theme.of(context).primaryColor
-        : ColorBean.fromBean(taskBean.taskIconBean.colorBean);
+        : ColorBean.fromBean(taskBean!.taskIconBean!.colorBean!);
     final textColor = getTextColor(context);
-    final taskIconData = IconBean.fromBean(taskBean.taskIconBean.iconBean);
+    final taskIconData = IconBean.fromBean(taskBean!.taskIconBean!.iconBean!);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -75,6 +75,7 @@ class TaskInfoWidget extends StatelessWidget {
                                   onDelete: onDelete,
                                   onEdit: onEdit,
                                   taskBean: taskBean,
+                                  key: GlobalKey(),
                                 )))),
               ),
             )
@@ -87,18 +88,21 @@ class TaskInfoWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            taskBean.getNeedUpdateToCloud(taskBean) ? Hero(
-              tag: "task_syn$index",
-              child: Material(
-                color: Colors.transparent,
-                child: Text(
-                  "(${IntlLocalizations.of(context).notSynced})",
-                  style: TextStyle(
-                    color: textColor,
-                      fontSize: 12,),
-                ),
-              ),
-            ) : Container(),
+            taskBean!.getNeedUpdateToCloud(taskBean!)
+                ? Hero(
+                    tag: "task_syn$index",
+                    child: Material(
+                      color: Colors.transparent,
+                      child: Text(
+                        "(${IntlLocalizations.of(context).notSynced})",
+                        style: TextStyle(
+                          color: textColor,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  )
+                : Container(),
             Container(
               child: Row(
                 children: <Widget>[
@@ -111,10 +115,11 @@ class TaskInfoWidget extends StatelessWidget {
                         child: Material(
                           color: Colors.transparent,
                           child: Text(
-                            "${taskBean.taskName} ",
+                            taskBean?.taskName ?? '',
                             style: TextStyle(
-                              color: textColor,
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                                color: textColor,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
@@ -124,7 +129,7 @@ class TaskInfoWidget extends StatelessWidget {
                     flex: 4,
                     child: Container(
                       alignment: Alignment.bottomRight,
-                      child: taskBean.overallProgress >= 1.0 && !isExisting
+                      child: taskBean!.overallProgress >= 1.0 && !isExisting
                           ? Hero(
                               tag: "task_complete$index",
                               child: Icon(
@@ -147,8 +152,8 @@ class TaskInfoWidget extends StatelessWidget {
                 child: Material(
                   color: Colors.transparent,
                   child: Text(
-                    "${IntlLocalizations.of(context).itemNumber(taskBean.taskDetailNum)}",
-                    style: TextStyle(fontSize: 10,color: textColor),
+                    "${IntlLocalizations.of(context).itemNumber(taskBean!.taskDetailNum)}",
+                    style: TextStyle(fontSize: 10, color: textColor),
                   ),
                 ),
               ),
@@ -160,9 +165,11 @@ class TaskInfoWidget extends StatelessWidget {
                 child: Material(
                     color: Colors.transparent,
                     child: Text(
-                      "${(taskBean.overallProgress * 100).toInt()}%",
-                      style:
-                          TextStyle(fontSize: 10, fontWeight: FontWeight.bold,color: textColor),
+                      "${(taskBean!.overallProgress * 100).toInt()}%",
+                      style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: textColor),
                     )),
               ),
             ),
@@ -175,7 +182,7 @@ class TaskInfoWidget extends StatelessWidget {
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                   child: LinearProgressIndicator(
                     valueColor: AlwaysStoppedAnimation(iconColor),
-                    value: taskBean.overallProgress,
+                    value: taskBean!.overallProgress,
                     backgroundColor: Color.fromRGBO(224, 224, 224, 1),
                   ),
                 ),
@@ -188,8 +195,8 @@ class TaskInfoWidget extends StatelessWidget {
   }
 
   Widget getStatusWidget(BuildContext context, Color taskColor) {
-    final startDate = taskBean.startDate ?? "";
-    final deadLine = taskBean.deadLine ?? "";
+    final startDate = taskBean!.startDate ?? "";
+    final deadLine = taskBean!.deadLine ?? "";
     final now = DateTime.now();
     if (startDate.isNotEmpty && deadLine.isNotEmpty) {
       final begin = DateTime.parse(startDate);
@@ -240,7 +247,9 @@ class TaskInfoWidget extends StatelessWidget {
                   showHour
                       ? IntlLocalizations.of(context).hours(hours)
                       : IntlLocalizations.of(context).days(days),
-                  style: TextStyle(color: taskColor,),
+                  style: TextStyle(
+                    color: taskColor,
+                  ),
                 ),
               )),
         ),
@@ -248,9 +257,9 @@ class TaskInfoWidget extends StatelessWidget {
     );
   }
 
-  Color getTextColor(BuildContext context){
-    final textColor = taskBean.textColor;
-    if(textColor != null) return ColorBean.fromBean(textColor);
+  Color? getTextColor(BuildContext context) {
+    final textColor = taskBean!.textColor;
+    if (textColor != null) return ColorBean.fromBean(textColor);
     return DefaultTextStyle.of(context).style.color;
   }
 
