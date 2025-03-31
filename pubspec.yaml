@@ -52,13 +52,13 @@ dev_dependencies:
   #路径获取
   path_provider: ^2.0.7
   #图片裁剪
-  image_crop: ^0.4.0
+  image_cropper: ^9.0.0
   #svg----这个控件真是饱受挫折呀！
   flutter_svg: ^2.0.17
   #获取package信息
-  package_info: ^2.0.2
+#  package_info: ^2.0.2
   #网页
-  flutter_webview_plugin: ^0.4.0
+  webview_flutter: ^4.10.0
   #上拉加载
   pull_to_refresh: ^2.0.0
   #看图片
@@ -68,7 +68,7 @@ dev_dependencies:
   #打开文件，android更新下载安装包用
   open_file: ^3.2.1
   #flare动画
-  flare_flutter: ^3.0.2
+#  flare_flutter: ^3.0.2
   #加密
   encrypt: ^5.0.1
   #列表动画

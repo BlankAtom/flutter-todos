@@ -55,7 +55,7 @@ class EditTaskPageLogic {
   //监测软键盘
   void scrollToEndWhenEdit() {
     //检测软键盘是否弹出
-    if (MediaQuery.of(_model.context).viewInsets.bottom > 100) {
+    if (MediaQuery.of(_model.context!).viewInsets.bottom > 100) {
       debugPrint("软键盘弹出}");
       final scroller = _model.scrollController;
       debugPrint(
@@ -98,13 +98,13 @@ class EditTaskPageLogic {
         if (_model.startDate != null) {
           if (day.isBefore(_model.startDate!)) {
             showDialog(
-                context: _model.context,
+                context: _model.context!,
                 builder: (ctx) {
                   return AlertDialog(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(20.0))),
                     content: Text(
-                        IntlLocalizations.of(_model.context)!.endBeforeStart),
+                        IntlLocalizations.of(_model.context!)!.endBeforeStart),
                   );
                 });
             return;
@@ -127,13 +127,13 @@ class EditTaskPageLogic {
         if (_model.deadLine != null) {
           if (day.isAfter(_model.deadLine!)) {
             showDialog(
-                context: _model.context,
+                context: _model.context!,
                 builder: (ctx) {
                   return AlertDialog(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(20.0))),
                     content: Text(
-                        IntlLocalizations.of(_model.context)!.startAfterEnd),
+                        IntlLocalizations.of(_model.context!)!.startAfterEnd),
                   );
                 });
             return;
@@ -148,7 +148,7 @@ class EditTaskPageLogic {
   Future<DateTime?> showDP(DateTime firstDate, DateTime initialDate,
       DateTime lastDate, bool isDarkNow) {
     return showDatePicker(
-      context: _model.context,
+      context: _model.context!,
       initialDate: firstDate,
       firstDate: initialDate,
       lastDate: lastDate,
@@ -176,7 +176,7 @@ class EditTaskPageLogic {
       final time = _model.deadLine!;
       return "${time.year}-${time.month}-${time.day}";
     }
-    return IntlLocalizations.of(_model.context)!.deadline;
+    return IntlLocalizations.of(_model.context!)!.deadline;
   }
 
   //将开始时间做转换
@@ -185,7 +185,7 @@ class EditTaskPageLogic {
       final time = _model.startDate!;
       return "${time.year}-${time.month}-${time.day}";
     }
-    return IntlLocalizations.of(_model.context)!.startDate;
+    return IntlLocalizations.of(_model.context!)!.startDate;
   }
 
   //将DateTime转换为String
@@ -208,12 +208,12 @@ class EditTaskPageLogic {
   void submitNewTask() async {
     if (_model.taskDetails.length == 0) {
       showDialog(
-          context: _model.context,
+          context: _model.context!,
           builder: (ctx) {
             return AlertDialog(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              content: Text(IntlLocalizations.of(_model.context)!
+              content: Text(IntlLocalizations.of(_model.context!)!
                   .writeAtLeastOneTaskItem),
             );
           });
@@ -232,8 +232,8 @@ class EditTaskPageLogic {
     await DBProvider.db.createTask(taskBean);
     await _model.mainPageModel?.logic.getTasks();
     _model.mainPageModel?.refresh();
-    Navigator.of(_model.context).pop();
-    if (needCancelDialog) Navigator.of(_model.context).pop();
+    Navigator.of(_model.context!).pop();
+    if (needCancelDialog) Navigator.of(_model.context!).pop();
   }
 
   Future exitWhenSubmitOldTask(TaskBean taskBean) async {
@@ -244,19 +244,19 @@ class EditTaskPageLogic {
       _model.taskDetailPageModel?.isExiting = true;
       _model.taskDetailPageModel?.refresh();
     }
-    Navigator.of(_model.context).popUntil((route) => route.isFirst);
+    Navigator.of(_model.context!).popUntil((route) => route.isFirst);
   }
 
   //修改旧的任务
   void submitOldTask() async {
     if (_model.taskDetails.length == 0) {
       showDialog(
-          context: _model.context,
+          context: _model.context!,
           builder: (ctx) {
             return AlertDialog(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              content: Text(IntlLocalizations.of(_model.context)!
+              content: Text(IntlLocalizations.of(_model.context!)!
                   .writeAtLeastOneTaskItem),
             );
           });
@@ -277,7 +277,7 @@ class EditTaskPageLogic {
   ///在云端创建一个任务
   void postCreateTask(TaskBean taskBean, {bool isSubmitOldTask = false}) async {
     showDialog(
-        context: _model.context,
+        context: _model.context!,
         builder: (ctx) {
           return NetLoadingWidget(
             key: GlobalKey(),
@@ -317,7 +317,7 @@ class EditTaskPageLogic {
     TaskBean taskBean,
   ) async {
     showDialog(
-        context: _model.context,
+        context: _model.context!,
         builder: (ctx) {
           return NetLoadingWidget(
             key: GlobalKey(),
@@ -394,18 +394,26 @@ class EditTaskPageLogic {
     if (oldTaskBean != null) {
       _model.taskDetails.clear();
       _model.taskDetails.addAll(oldTaskBean.detailList!);
-      if (oldTaskBean.deadLine != null)
+
+      debugPrint(
+          'startDate:${oldTaskBean.startDate}, deadLine:${oldTaskBean.deadLine}');
+      if (oldTaskBean.deadLine != null && oldTaskBean.deadLine.isNotEmpty)
         _model.deadLine = DateTime.parse(oldTaskBean.deadLine);
-      if (oldTaskBean.startDate != null)
+      if (oldTaskBean.startDate != null && oldTaskBean.startDate.isNotEmpty)
         _model.startDate = DateTime.parse(oldTaskBean.startDate);
-      _model.createDate = DateTime.parse(oldTaskBean.createDate);
+      if (oldTaskBean.createDate != null && oldTaskBean.createDate.isNotEmpty)
+        _model.createDate = DateTime.parse(oldTaskBean.createDate);
       if (oldTaskBean.finishDate.isNotEmpty)
         _model.finishDate = DateTime.parse(oldTaskBean.finishDate);
       _model.changeTimes = oldTaskBean.changeTimes ?? 0;
-      _model.taskIcon = oldTaskBean.taskIconBean!;
-      _model.currentTaskName = oldTaskBean.taskName;
-      _model.backgroundUrl = oldTaskBean.backgroundUrl!;
-      _model.textColorBean = oldTaskBean.textColor!;
+      if (oldTaskBean.taskIconBean != null)
+        _model.taskIcon = oldTaskBean.taskIconBean!;
+      if (oldTaskBean.taskName != null)
+        _model.currentTaskName = oldTaskBean.taskName;
+      if (oldTaskBean.backgroundUrl != null)
+        _model.backgroundUrl = oldTaskBean.backgroundUrl!;
+      if (oldTaskBean.textColor != null)
+        _model.textColorBean = oldTaskBean.textColor!;
     }
   }
 
@@ -416,7 +424,7 @@ class EditTaskPageLogic {
 
   String getHintTitle() {
     bool isEdit = isEditOldTask();
-    final context = _model.context;
+    final context = _model.context!;
     String defaultTitle =
         "${IntlLocalizations.of(context)?.defaultTitle}:${_model.taskIcon?.taskName}";
     String oldTaskTitle = "${_model.oldTaskBean?.taskName ?? ''}";
@@ -435,14 +443,14 @@ class EditTaskPageLogic {
   void onIconPress(IconBean iconBean, ColorBean colorBean) {
     showDialog(
       barrierDismissible: false,
-      context: _model.context,
+      context: _model.context!,
       builder: (ctx) {
         return AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
             elevation: 0.0,
             contentPadding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-            title: Text(IntlLocalizations.of(_model.context)!.customIcon),
+            title: Text(IntlLocalizations.of(_model.context!)!.customIcon),
             content: CustomIconWidget(
               iconData: IconBean.fromBean(iconBean),
               onApplyTap: (Color color) async {
@@ -452,7 +460,7 @@ class EditTaskPageLogic {
               pickerColor: ColorBean.fromBean(colorBean),
               onTextChange: (text) {
                 final name = text.isEmpty
-                    ? IntlLocalizations.of(_model.context)?.defaultIconName
+                    ? IntlLocalizations.of(_model.context!)?.defaultIconName
                     : text;
                 _model.taskIcon?.iconBean?.iconName = name;
               },

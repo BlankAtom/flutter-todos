@@ -25,7 +25,8 @@ class EditTaskPage extends StatelessWidget {
     final GlobalModel globalModel = Provider.of<GlobalModel>(context);
     model.setContext(context);
     model.setMainPageModel(globalModel.mainPageModel);
-    model.setTaskDetailPageModel(taskDetailPageModel);
+    if (taskDetailPageModel != null)
+      model.setTaskDetailPageModel(taskDetailPageModel!);
     model.setTaskIcon(taskIconBean);
 
     final iconColor = ColorBean.fromBean(taskIconBean.colorBean!);

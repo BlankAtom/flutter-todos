@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:todo_list/config/floating_border.dart';
 import 'package:todo_list/utils/full_screen_dialog_util.dart';
 import 'package:todo_list/utils/icon_list_util.dart';
 import 'package:todo_list/widgets/bottom_show_widget.dart';
@@ -38,6 +37,8 @@ class _AnimatedFloatingButtonState extends State<AnimatedFloatingButton>
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(
+        "Color: ${widget.bgColor}, PrimaryColor: ${Theme.of(context).primaryColor}");
     return AnimatedBuilder(
       animation: _animation,
       builder: (ctx, child) {
@@ -62,16 +63,18 @@ class _AnimatedFloatingButtonState extends State<AnimatedFloatingButton>
                 ));
             _controller.forward();
           },
-          child: Transform.rotate(
-            angle: pi / 2,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Icon(
               Icons.add,
               size: 25,
               color: Colors.white,
             ),
           ),
-          backgroundColor: widget.bgColor ?? Theme.of(context).primaryColor,
-          shape: FloatingBorder(),
+          backgroundColor: widget.bgColor == Colors.transparent
+              ? Theme.of(context).primaryColor
+              : widget.bgColor,
+          // shape: FloatingBorder(),
         ),
       ),
     );

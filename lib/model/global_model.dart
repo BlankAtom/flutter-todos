@@ -9,12 +9,12 @@ import 'package:todo_list/widgets/net_loading_widget.dart';
 
 class GlobalModel extends ChangeNotifier {
   late GlobalLogic logic;
-  late BuildContext context;
+  BuildContext? context = null;
 
   ///GlobalModel可以用来统一管理所有的model，这里只管理了一部分
   late MainPageModel mainPageModel;
-  late SearchPageModel searchPageModel;
-  late TaskDetailPageModel? taskDetailPageModel;
+  SearchPageModel? searchPageModel;
+  late TaskDetailPageModel taskDetailPageModel;
 
   ///app的名字
   String appName = '一日';
@@ -68,7 +68,7 @@ class GlobalModel extends ChangeNotifier {
   ///当前语言
   List<String> currentLanguageCode = ['zh', 'CN'];
   String currentLanguage = '中文';
-  late Locale currentLocale;
+  Locale? currentLocale;
 
   ///当前导航栏头部背景
   String currentNavHeader = NavHeadType.meteorShower;
@@ -77,7 +77,7 @@ class GlobalModel extends ChangeNotifier {
   String currentNetPicUrl = "";
 
   ///是否进入登录页
-  bool goToLogin = true;
+  bool goToLogin = false;
 
   GlobalModel() {
     logic = GlobalLogic(this);
@@ -114,10 +114,8 @@ class GlobalModel extends ChangeNotifier {
   }
 
   void setMainPageModel(MainPageModel mainPageModel) {
-    if (this.mainPageModel == null) {
-      this.mainPageModel = mainPageModel;
-      debugPrint("设置mainPageModel");
-    }
+    this.mainPageModel = mainPageModel;
+    // debugPrint("设置mainPageModel");
   }
 
   void setSearchPageModel(SearchPageModel searchPageModel) {

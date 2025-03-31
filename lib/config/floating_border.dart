@@ -6,7 +6,7 @@ import 'package:todo_list/utils/size_util.dart';
 ///正六边形实现
 class FloatingBorder extends ShapeBorder {
   @override
-  EdgeInsetsGeometry get dimensions => EdgeInsets.only();
+  EdgeInsetsGeometry get dimensions => EdgeInsets.all(8);
 
   @override
   Path getInnerPath(Rect rect, {TextDirection? textDirection}) {
@@ -15,6 +15,21 @@ class FloatingBorder extends ShapeBorder {
 
   @override
   Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
+    final double width = rect.width;
+    final double height = rect.height;
+    final double sideLength = width / 2;
+    final double centerX = rect.center.dx;
+    final double centerY = rect.center.dy;
+
+    final Path path = Path();
+    path.moveTo(centerX + sideLength * cos(0), centerY + sideLength * sin(0));
+    for (int i = 1; i <= 6; i++) {
+      path.lineTo(centerX + sideLength * cos(i * pi / 3),
+          centerY + sideLength * sin(i * pi / 3));
+    }
+    path.close();
+    return path;
+
     ///正六边形中心
     Offset center = rect.center;
 

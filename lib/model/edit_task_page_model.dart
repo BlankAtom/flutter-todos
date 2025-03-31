@@ -9,7 +9,7 @@ import 'package:todo_list/model/task_detail_page_model.dart';
 
 class EditTaskPageModel extends ChangeNotifier {
   late EditTaskPageLogic logic;
-  late BuildContext context;
+  BuildContext? context;
   final TextEditingController textEditingController = TextEditingController();
   final ScrollController scrollController = ScrollController();
 
@@ -84,9 +84,9 @@ class EditTaskPageModel extends ChangeNotifier {
     this.mainPageModel = mainPageModel;
   }
 
-  void setTaskDetailPageModel(TaskDetailPageModel? taskDetailPageModel) {
-    if (taskDetailPageModel == null) {
-      this.taskDetailPageModel = taskDetailPageModel!;
+  void setTaskDetailPageModel(TaskDetailPageModel taskDetailPageModel) {
+    if (this.taskDetailPageModel == null) {
+      this.taskDetailPageModel = taskDetailPageModel;
     }
   }
 }

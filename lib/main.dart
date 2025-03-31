@@ -20,6 +20,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = Provider.of<GlobalModel>(context)..setContext(context);
 
+    model.goToLogin = false;
+    model.enableSplashAnimation = false;
+
     return MaterialApp(
       title: model.appName,
       localizationsDelegates: [
@@ -67,6 +70,8 @@ class MyApp extends StatelessWidget {
   }
 
   Widget getHomePage(bool goToLogin, bool enableSplashAnimation) {
+    debugPrint(
+        "getHomePage: $goToLogin, enableSplashAnimation: $enableSplashAnimation");
     if (goToLogin == null) return Container();
     if (enableSplashAnimation) return new SplashPage();
     return goToLogin

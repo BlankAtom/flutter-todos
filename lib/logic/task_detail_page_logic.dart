@@ -47,7 +47,7 @@ class TaskDetailPageLogic {
   void exitPage({bool isDeleting = false}) {
     final context = _model.context;
     final mainPageModel = _model.globalModel.mainPageModel;
-    mainPageModel.canHideWidget = false;
+    mainPageModel?.canHideWidget = false;
     bool needUpdate = needUpdateDatabase();
     if (needUpdate && !isDeleting) {
       ///如果一个任务中的所有任务项都完成了,因为主页面都是未完成任务，所以删除主页面的该任务
@@ -63,7 +63,7 @@ class TaskDetailPageLogic {
           debugPrint("删除了");
           removeTask(mainPageModel);
           debugPrint("刷新main");
-          mainPageModel.refresh();
+          mainPageModel?.refresh();
         });
       }
       _model.taskBean.changeTimes++;
@@ -72,13 +72,13 @@ class TaskDetailPageLogic {
             await SharedUtil.instance.getString(Keys.account) ?? 'default';
         if (account != 'default') {
           _model.taskBean.uniqueId == null
-              ? mainPageModel.logic.postCreateTask(_model.taskBean)
-              : mainPageModel.logic.postUpdateTask(_model.taskBean);
+              ? mainPageModel?.logic.postCreateTask(_model.taskBean)
+              : mainPageModel?.logic.postUpdateTask(_model.taskBean);
         }
 
         ///如果是从"完成列表"过来
         if (_model.doneTaskPageModel != null) {
-          mainPageModel.logic.getTasks();
+          mainPageModel?.logic.getTasks();
           _model.doneTaskPageModel?.logic.getDoneTasks().then((value) {
             _model.doneTaskPageModel?.refresh();
             Navigator.of(context).pop();
@@ -89,7 +89,7 @@ class TaskDetailPageLogic {
         else if (_model.searchPageModel != null) {
           _model.isExiting = true;
           _model.refresh();
-          mainPageModel.logic.getTasks();
+          mainPageModel?.logic.getTasks();
           _model.searchPageModel?.logic.onEditingComplete();
           Navigator.of(context).pop();
         } else {
@@ -103,7 +103,7 @@ class TaskDetailPageLogic {
     }
     _model.isExiting = true;
     _model.refresh();
-    mainPageModel.refresh();
+    mainPageModel?.refresh();
     if (isDeleting) {
       Future.delayed(
           Duration(
@@ -112,7 +112,7 @@ class TaskDetailPageLogic {
         debugPrint("删除了");
         removeTask(mainPageModel);
         debugPrint("刷新main");
-        mainPageModel.refresh();
+        mainPageModel?.refresh();
       });
     }
     Navigator.of(context).pop();
@@ -212,7 +212,8 @@ class TaskDetailPageLogic {
     exitPage(isDeleting: true);
   }
 
-  void removeTask(MainPageModel mainPageModel) {
+  void removeTask(MainPageModel? mainPageModel) {
+    if (mainPageModel == null) return;
     for (var i = 0; i < mainPageModel.tasks.length; i++) {
       var task = mainPageModel.tasks[i];
       if (task.id == _model.taskBean.id) {

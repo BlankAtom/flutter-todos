@@ -134,9 +134,9 @@ class NetPicturesPageLogic {
               _model.taskBean?.backgroundUrl = currentUrl;
               DBProvider.db.updateTask(_model.taskBean!);
               final searchModel = globalModel.searchPageModel;
-              searchModel.refresh();
+              searchModel?.refresh();
               final mainPageModel = globalModel.mainPageModel;
-              mainPageModel.refresh();
+              mainPageModel?.refresh();
               break;
             default:
               SharedUtil.instance
@@ -205,11 +205,11 @@ class NetPicturesPageLogic {
         _model.taskBean?.backgroundUrl = currentUrl;
         DBProvider.db.updateTask(_model.taskBean!);
         final searchModel = globalModel.searchPageModel;
-        searchModel.refresh();
+        searchModel?.refresh();
         final taskDetailPageModel = globalModel.taskDetailPageModel;
         taskDetailPageModel?.refresh();
         final mainPageModel = globalModel.mainPageModel;
-        mainPageModel.refresh();
+        mainPageModel?.refresh();
         break;
       default:
         SharedUtil.instance

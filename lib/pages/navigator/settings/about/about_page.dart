@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list/config/api_service.dart';
 import 'package:todo_list/i10n/localization_intl.dart';
@@ -10,7 +9,6 @@ import 'package:todo_list/model/global_model.dart';
 import 'package:todo_list/pages/navigator/settings/about/webview_page.dart';
 import 'package:todo_list/widgets/loading_widget.dart';
 import 'package:todo_list/widgets/net_loading_widget.dart';
-import 'package:todo_list/widgets/update_dialog.dart';
 
 class AboutPage extends StatefulWidget {
   @override
@@ -116,29 +114,29 @@ class _AboutPageState extends State<AboutPage> {
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: <Widget>[
-                                Container(
-                                  alignment: Alignment.bottomLeft,
-                                  child: FutureBuilder(
-                                      future: PackageInfo.fromPlatform(),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          PackageInfo? packageInfo =
-                                              snapshot.data;
-                                          return Text(
-                                            packageInfo?.version ?? 'NULL',
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                color: Theme.of(context)
-                                                            .primaryColor ==
-                                                        Color(0xff212121)
-                                                    ? Colors.white
-                                                    : Color.fromRGBO(
-                                                        141, 141, 141, 1.0)),
-                                          );
-                                        } else
-                                          return Container();
-                                      }),
-                                ),
+                                // Container(
+                                //   alignment: Alignment.bottomLeft,
+                                //   child: FutureBuilder(
+                                //       future: PackageInfo.fromPlatform(),
+                                //       builder: (context, snapshot) {
+                                //         if (snapshot.hasData) {
+                                //           PackageInfo? packageInfo =
+                                //               snapshot.data;
+                                //           return Text(
+                                //             packageInfo?.version ?? 'NULL',
+                                //             style: TextStyle(
+                                //                 fontSize: 20,
+                                //                 color: Theme.of(context)
+                                //                             .primaryColor ==
+                                //                         Color(0xff212121)
+                                //                     ? Colors.white
+                                //                     : Color.fromRGBO(
+                                //                         141, 141, 141, 1.0)),
+                                //           );
+                                //         } else
+                                //           return Container();
+                                //       }),
+                                // ),
                                 SizedBox(
                                   width: 30,
                                 ),
@@ -268,31 +266,31 @@ class _AboutPageState extends State<AboutPage> {
             onRequest: () {
               ApiService.instance.checkUpdate(
                 success: (UpdateInfoBean updateInfo) async {
-                  final packageInfo = await PackageInfo.fromPlatform();
-                  bool needUpdate = UpdateInfoBean.needUpdate(
-                      packageInfo.version, updateInfo.appVersion);
-                  if (needUpdate) {
-                    Navigator.of(context).pop();
-                    showDialog(
-                        context: context,
-                        builder: (ctx2) {
-                          return UpdateDialog(
-                            version: updateInfo.appVersion,
-                            updateUrl: updateInfo.downloadUrl,
-                            updateInfo: updateInfo.updateInfo,
-                            updateInfoColor: globalModel.logic.getBgInDark(),
-                            backgroundColor:
-                                globalModel.logic.getPrimaryGreyInDark(context),
-                          );
-                        });
-                  }
+                  // final packageInfo = await PackageInfo.fromPlatform();
+                  // bool needUpdate = UpdateInfoBean.needUpdate(
+                  //     packageInfo.version, updateInfo.appVersion);
+                  // if (needUpdate) {
+                  //   Navigator.of(context).pop();
+                  //   showDialog(
+                  //       context: context,
+                  //       builder: (ctx2) {
+                  //         return UpdateDialog(
+                  //           version: updateInfo.appVersion,
+                  //           updateUrl: updateInfo.downloadUrl,
+                  //           updateInfo: updateInfo.updateInfo,
+                  //           updateInfoColor: globalModel.logic.getBgInDark(),
+                  //           backgroundColor:
+                  //               globalModel.logic.getPrimaryGreyInDark(context),
+                  //         );
+                  //       });
+                  // }
                   loadingController.setFlag(LoadingFlag.success);
                 },
                 error: (msg) {
                   loadingController.setFlag(LoadingFlag.error);
                 },
                 params: {
-                  "language": globalModel.currentLocale.languageCode,
+                  "language": globalModel.currentLocale?.languageCode ?? 'None',
                   "appId": "001"
                 },
                 token: cancelToken,

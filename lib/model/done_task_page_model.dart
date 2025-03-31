@@ -7,7 +7,7 @@ export 'package:todo_list/widgets/loading_widget.dart';
 
 class DoneTaskPageModel extends ChangeNotifier {
   late DoneTaskPageLogic logic;
-  late BuildContext context;
+  BuildContext? context;
 
   LoadingFlag loadingFlag = LoadingFlag.loading;
   List<TaskBean> doneTasks = [];

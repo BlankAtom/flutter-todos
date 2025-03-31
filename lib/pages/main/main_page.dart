@@ -14,12 +14,14 @@ import 'package:todo_list/widgets/synchronize_widget.dart';
 
 class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
+    // debugPrint('MainPage build');
+
     final model = Provider.of<MainPageModel>(context);
     final globalModel = Provider.of<GlobalModel>(context);
     final size = MediaQuery.of(context).size;
     final canHideWidget = model.canHideWidget;
-    model.setContext(context, globalModel: globalModel);
     globalModel.setMainPageModel(model);
+    model.setContext(context, globalModel: globalModel);
 
     return GestureDetector(
       onLongPress: () => model.logic.onBackGroundTap(globalModel),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:image_crop/image_crop.dart';
 import 'package:todo_list/config/api_service.dart';
 import 'package:todo_list/logic/all_logic.dart';
 import 'package:todo_list/model/main_page_model.dart';
@@ -15,16 +14,14 @@ class AvatarPageModel extends ChangeNotifier {
   //当前的头像url,比如本地的就是本地路径，网络就是网络地址
   String currentAvatarUrl = "images/icon.png";
 
-  final cropKey = GlobalKey<CropState>();
+  final cropKey = GlobalKey();
 
   AvatarPageModel() {
     logic = AvatarPageLogic(this);
   }
 
   void setContext(BuildContext context) {
-    if (this.context == null) {
-      this.context = context;
-    }
+    this.context = context;
   }
 
   @override
@@ -40,11 +37,9 @@ class AvatarPageModel extends ChangeNotifier {
   }
 
   void setMainPageModel(MainPageModel mainPageModel) {
-    if (this.mainPageModel == null) {
-      this.mainPageModel = mainPageModel;
-      this.currentAvatarType = mainPageModel.currentAvatarType;
-      this.currentAvatarUrl = mainPageModel.currentAvatarUrl;
-    }
+    this.mainPageModel = mainPageModel;
+    this.currentAvatarType = mainPageModel.currentAvatarType;
+    this.currentAvatarUrl = mainPageModel.currentAvatarUrl;
   }
 }
 

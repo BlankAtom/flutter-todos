@@ -78,7 +78,7 @@ class TaskDetailPageModel extends ChangeNotifier {
     timer?.cancel();
     if (!cancelToken.isCancelled) cancelToken.cancel();
     super.dispose();
-    globalModel.taskDetailPageModel = null;
+    // globalModel.taskDetailPageModel = null;
     debugPrint("TaskDetailPageModel销毁了");
   }
 

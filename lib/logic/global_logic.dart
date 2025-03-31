@@ -249,7 +249,7 @@ class GlobalLogic {
         params: {
           "key": "d381a4276ed349daa3bf63646f12d8ae",
           "location": position,
-          "lang": _model.currentLocale.languageCode
+          "lang": _model.currentLocale?.languageCode ?? 'None'
         },
         token: CancelToken());
   }

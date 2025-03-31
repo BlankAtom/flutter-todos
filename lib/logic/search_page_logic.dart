@@ -39,27 +39,29 @@ class SearchPageLogic {
 
   void onTaskTap(int index, TaskBean taskBean, GlobalModel globalModel) {
     _model.currentTapIndex = index;
-    Navigator.of(_model.context).push(new PageRouteBuilder(
+
+    if (_model.context == null) return;
+    Navigator.of(_model.context!).push(new PageRouteBuilder(
         pageBuilder: (ctx, anm, anmS) {
           return ProviderConfig.getInstance().getTaskDetailPage(
               taskBean.id, taskBean,
               searchPageModel: _model);
         },
-        opaque: !globalModel.mainPageModel.enableTaskPageOpacity,
+        opaque: !(globalModel.mainPageModel?.enableTaskPageOpacity ?? false),
         transitionDuration: Duration(milliseconds: 800)));
   }
 
   void onDelete(GlobalModel globalModel, TaskBean task) {
     showDialog(
-        context: _model.context,
+        context: _model.context!,
         builder: (ctx) {
           return AlertDialog(
             title: Text(
-                "${IntlLocalizations.of(_model.context).doDelete}${task.taskName}"),
+                "${IntlLocalizations.of(_model.context!).doDelete}${task.taskName}"),
             actions: <Widget>[
               TextButton(
                   onPressed: () {
-                    Navigator.of(_model.context).pop();
+                    Navigator.of(_model.context!).pop();
                     deleteTask(task, globalModel);
                   },
                   child: Text(
@@ -68,7 +70,7 @@ class SearchPageLogic {
                   )),
               TextButton(
                   onPressed: () {
-                    Navigator.of(_model.context).pop();
+                    Navigator.of(_model.context!).pop();
                   },
                   child: Text(
                     "取消",
@@ -87,7 +89,7 @@ class SearchPageLogic {
   }
 
   void onEdit(TaskBean taskBean, MainPageModel mainPageModel) {
-    Navigator.of(_model.context).push(
+    Navigator.of(_model.context!).push(
       new CupertinoPageRoute(
         builder: (ctx) {
           return ProviderConfig.getInstance().getEditTaskPage(
@@ -111,7 +113,7 @@ class SearchPageLogic {
       } else {
         final token = await SharedUtil.instance.getString(Keys.token);
         showDialog(
-            context: _model.context,
+            context: _model.context!,
             builder: (ctx) {
               return NetLoadingWidget(
                 key: GlobalKey(),
@@ -119,11 +121,11 @@ class SearchPageLogic {
             });
         ApiService.instance.postDeleteTask(
           success: (CommonBean bean) {
-            Navigator.of(_model.context).pop();
+            Navigator.of(_model.context!).pop();
             doDelete(taskBean, globalModel);
           },
           failed: (CommonBean bean) {
-            Navigator.of(_model.context).pop();
+            Navigator.of(_model.context!).pop();
             if (bean.description.contains("任务不存在")) {
               doDelete(taskBean, globalModel);
             } else {
@@ -131,7 +133,7 @@ class SearchPageLogic {
             }
           },
           error: (msg) {
-            Navigator.of(_model.context).pop();
+            Navigator.of(_model.context!).pop();
             _showTextDialog(msg);
           },
           params: {
@@ -147,8 +149,9 @@ class SearchPageLogic {
 
   void _showTextDialog(String text) {
     final context = _model.context;
+    if (_model.context == null) return;
     showDialog(
-        context: context,
+        context: context!,
         builder: (ctx) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
@@ -158,7 +161,9 @@ class SearchPageLogic {
         });
   }
 
-  void removeTask(MainPageModel mainPageModel, int id) {
+  void removeTask(MainPageModel? mainPageModel, int id) {
+    if (mainPageModel == null) return;
+
     for (var i = 0; i < mainPageModel.tasks.length; i++) {
       var task = mainPageModel.tasks[i];
       if (task.id == id) {

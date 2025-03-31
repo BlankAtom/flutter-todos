@@ -24,7 +24,9 @@ class DoneTaskPageLogic {
 
   void onTaskTap(int index, TaskBean task) {
     _model.currentTapIndex = index;
-    Navigator.of(_model.context).push(new CupertinoPageRoute(builder: (ctx) {
+    if (_model.context == null) return;
+
+    Navigator.of(_model.context!).push(new CupertinoPageRoute(builder: (ctx) {
       return ProviderConfig.getInstance().getTaskDetailPage(
         task.id,
         task,
@@ -50,6 +52,7 @@ class DoneTaskPageLogic {
     DateTime timeEnd = DateTime.parse(dateEnd);
     Duration diff = timeEnd.difference(timeStart);
     final context = _model.context;
+    if (context == null) return "";
 
     return diff.inDays == 0
         ? "${IntlLocalizations.of(context)!.hours(diff.inHours.abs())}"

@@ -258,6 +258,7 @@ class _SynchronizeWidgetState extends State<SynchronizeWidget> {
   }
 
   void checkIfNeedSyn(String account, String token) async {
+    debugPrint('Sync needed?');
     final allTasks = await DBProvider.db.getAllTasks(account: account);
     List<TaskBean> needSynTasks = [];
     int needSynNum = 0;

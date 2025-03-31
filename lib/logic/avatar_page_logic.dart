@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:image_crop/image_crop.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:todo_list/config/api_service.dart';
 import 'package:todo_list/i10n/localization_intl.dart';
@@ -69,11 +69,11 @@ class AvatarPageLogic {
   }
 
   void onSaveTap() async {
-    final croppedFile = await ImageCrop.cropImage(
-      file: File(_model.currentAvatarUrl),
-      area: _model.cropKey.currentState?.area ?? Rect.zero,
+    final croppedFile = await ImageCropper.platform.cropImage(
+      sourcePath: _model.currentAvatarUrl,
+      aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
     );
-    await _saveImage(croppedFile);
+    await _saveImage(File(croppedFile?.path ?? _model.currentAvatarUrl));
   }
 
   Future _saveImage(File file) async {

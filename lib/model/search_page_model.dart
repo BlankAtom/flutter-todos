@@ -5,7 +5,7 @@ import 'package:todo_list/logic/search_page_logic.dart';
 import 'package:todo_list/model/all_model.dart';
 
 class SearchPageModel extends ChangeNotifier {
-  late BuildContext context;
+  BuildContext? context;
   late SearchPageLogic logic;
   late GlobalModel _globalModel;
 
@@ -35,7 +35,7 @@ class SearchPageModel extends ChangeNotifier {
     textEditingController?.dispose();
     if (!cancelToken.isCancelled) cancelToken.cancel();
     super.dispose();
-    _globalModel.searchPageModel.dispose();
+    // _globalModel.searchPageModel?.dispose();
     debugPrint("SearchPageModel销毁了");
   }
 

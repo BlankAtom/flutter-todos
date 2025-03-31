@@ -5,7 +5,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:package_info/package_info.dart';
 import 'package:todo_list/config/all_types.dart';
 import 'package:todo_list/config/api_service.dart';
 import 'package:todo_list/config/provider_config.dart';
@@ -20,7 +19,6 @@ import 'package:todo_list/utils/shared_util.dart';
 import 'package:todo_list/utils/theme_util.dart';
 import 'package:todo_list/widgets/edit_dialog.dart';
 import 'package:todo_list/widgets/net_loading_widget.dart';
-import 'package:todo_list/widgets/update_dialog.dart';
 
 class MainPageLogic {
   final MainPageModel _model;
@@ -36,11 +34,11 @@ class MainPageLogic {
           taskBean,
           onEdit: () => _model.logic.editTask(taskBean),
           onDelete: () => showDialog(
-              context: _model.context,
+              context: context,
               builder: (ctx) {
                 return AlertDialog(
                   title: Text(
-                      "${IntlLocalizations.of(_model.context).doDelete}${taskBean.taskName}"),
+                      "${IntlLocalizations.of(context).doDelete}${taskBean.taskName}"),
                   actions: <Widget>[
                     TextButton(
                         onPressed: () {
@@ -48,7 +46,7 @@ class MainPageLogic {
                           _model.logic.deleteTask(taskBean);
                         },
                         child: Text(
-                          IntlLocalizations.of(_model.context).delete,
+                          IntlLocalizations.of(context).delete,
                           style: TextStyle(color: Colors.redAccent),
                         )),
                     TextButton(
@@ -56,7 +54,7 @@ class MainPageLogic {
                           Navigator.of(context).pop();
                         },
                         child: Text(
-                          IntlLocalizations.of(_model.context).cancel,
+                          IntlLocalizations.of(context).cancel,
                           style: TextStyle(color: Colors.green),
                         )),
                   ],
@@ -164,7 +162,7 @@ class MainPageLogic {
 
   List<Color> _getGradientColors(bool isBgChangeWithCard) {
     final context = _model.context;
-    if (!isBgChangeWithCard) {
+    if (!isBgChangeWithCard && context != null) {
       return [
         Theme.of(context).primaryColorLight,
         Theme.of(context).primaryColor,
@@ -184,12 +182,15 @@ class MainPageLogic {
       return Colors.white; // TODO: 这里可以使用默认颜色
     }
     final context = _model.context;
+    if (context == null) return Colors.white;
+
     final primaryColor = Theme.of(context).primaryColor;
     return isBgChangeWithCard ? getCurrentCardColor() : primaryColor;
   }
 
   Color getCurrentCardColor() {
     final context = _model.context;
+    if (context == null) return Colors.white;
     final primaryColor = Theme.of(context).primaryColor;
     int index = _model.currentCardIndex;
     int taskLength = _model.tasks.length;
@@ -209,7 +210,7 @@ class MainPageLogic {
       } else {
         final token = await SharedUtil.instance.getString(Keys.token);
         showDialog(
-            context: _model.context,
+            context: _model.context!,
             builder: (ctx) {
               return NetLoadingWidget(
                 key: GlobalKey(),
@@ -217,11 +218,11 @@ class MainPageLogic {
             });
         ApiService.instance.postDeleteTask(
           success: (CommonBean bean) {
-            Navigator.of(_model.context).pop();
+            Navigator.of(_model.context!).pop();
             _deleteDataBaseTask(taskBean);
           },
           failed: (CommonBean bean) {
-            Navigator.of(_model.context).pop();
+            Navigator.of(_model.context!).pop();
             if (bean.description.contains("任务不存在")) {
               _deleteDataBaseTask(taskBean);
             } else {
@@ -229,7 +230,7 @@ class MainPageLogic {
             }
           },
           error: (msg) {
-            Navigator.of(_model.context).pop();
+            Navigator.of(_model.context!).pop();
             _showTextDialog(msg);
           },
           params: {
@@ -252,7 +253,8 @@ class MainPageLogic {
   }
 
   void editTask(TaskBean taskBean) {
-    Navigator.of(_model.context).push(
+    if (_model.context == null) return;
+    Navigator.of(_model.context!).push(
       new CupertinoPageRoute(
         builder: (ctx) {
           return ProviderConfig.getInstance().getEditTaskPage(
@@ -265,6 +267,7 @@ class MainPageLogic {
   //当任务列表为空时显示的内容
   Widget getEmptyWidget(GlobalModel globalModel) {
     final context = _model.context;
+    if (context == null) return Container();
     final size = MediaQuery.of(context).size;
     final theMin = min(size.width, size.height) / 2;
     return Container(
@@ -345,7 +348,7 @@ class MainPageLogic {
           width: 60,
           child: CircularProgressIndicator(
             valueColor: AlwaysStoppedAnimation(
-                Theme.of(_model.context).primaryColorLight),
+                Theme.of(_model.context!).primaryColorLight),
           ),
         );
         break;
@@ -365,7 +368,7 @@ class MainPageLogic {
   }
 
   void onAvatarTap() {
-    Navigator.of(_model.context).push(new CupertinoPageRoute(builder: (ctx) {
+    Navigator.of(_model.context!).push(new CupertinoPageRoute(builder: (ctx) {
       return ProviderConfig.getInstance().getAvatarPage(mainPageModel: _model);
     }));
   }
@@ -373,7 +376,7 @@ class MainPageLogic {
   void onUserNameTap() {
     final context = _model.context;
     showDialog(
-        context: context,
+        context: context!,
         builder: (ctx) {
           return EditDialog(
             title: IntlLocalizations.of(context).customUserName,
@@ -408,7 +411,7 @@ class MainPageLogic {
   void _showTextDialog(String text) {
     final context = _model.context;
     showDialog(
-        context: context,
+        context: context!,
         builder: (ctx) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
@@ -421,7 +424,7 @@ class MainPageLogic {
   void _changeUserName(String account, String userName) async {
     final context = _model.context;
     final token = await SharedUtil.instance.getString(Keys.token);
-    _showLoadingDialog(context);
+    _showLoadingDialog(context!);
     ApiService.instance.changeUserName(
       success: (bean) async {
         _model.currentUserName = _model.currentEditingUserName;
@@ -459,7 +462,7 @@ class MainPageLogic {
   }
 
   void onSearchTap() {
-    Navigator.of(_model.context).push(new CupertinoPageRoute(builder: (ctx) {
+    Navigator.of(_model.context!).push(new CupertinoPageRoute(builder: (ctx) {
       return ProviderConfig.getInstance().getSearchPage();
     }));
   }
@@ -470,27 +473,27 @@ class MainPageLogic {
     CancelToken cancelToken = CancelToken();
     ApiService.instance.checkUpdate(
       success: (UpdateInfoBean updateInfo) async {
-        final packageInfo = await PackageInfo.fromPlatform();
-        bool needUpdate = UpdateInfoBean.needUpdate(
-            packageInfo.version, updateInfo.appVersion);
-        if (needUpdate) {
-          showDialog(
-              context: context,
-              builder: (ctx2) {
-                return UpdateDialog(
-                  version: updateInfo.appVersion,
-                  updateUrl: updateInfo.downloadUrl,
-                  updateInfo: updateInfo.updateInfo,
-                  updateInfoColor: globalModel.logic.getBgInDark(),
-                  backgroundColor:
-                      globalModel.logic.getPrimaryGreyInDark(context),
-                );
-              });
-        }
+        // final packageInfo = await PackageInfo.fromPlatform();
+        // bool needUpdate = UpdateInfoBean.needUpdate(
+        //     packageInfo.version, updateInfo.appVersion);
+        // if (needUpdate) {
+        //   showDialog(
+        //       context: context,
+        //       builder: (ctx2) {
+        //         return UpdateDialog(
+        //           version: updateInfo.appVersion,
+        //           updateUrl: updateInfo.downloadUrl,
+        //           updateInfo: updateInfo.updateInfo,
+        //           updateInfoColor: globalModel.logic.getBgInDark(),
+        //           backgroundColor:
+        //               globalModel.logic.getPrimaryGreyInDark(context),
+        //         );
+        //       });
+        // }
       },
       error: (msg) {},
       params: {
-        "language": globalModel.currentLocale.languageCode,
+        "language": globalModel.currentLocale?.languageCode ?? 'None',
         "appId": "001"
       },
       token: cancelToken,
@@ -528,7 +531,7 @@ class MainPageLogic {
   ///在云端创建一个任务
   void postCreateTask(TaskBean taskBean) async {
     showDialog(
-        context: _model.context,
+        context: _model.context!,
         builder: (ctx) {
           return NetLoadingWidget(
             key: GlobalKey(),
@@ -560,7 +563,7 @@ class MainPageLogic {
   }
 
   void onBackGroundTap(GlobalModel globalModel) {
-    Navigator.of(_model.context).push(
+    Navigator.of(_model.context!).push(
       new CupertinoPageRoute(
         builder: (ctx) {
           return ProviderConfig.getInstance().getNetPicturesPage(

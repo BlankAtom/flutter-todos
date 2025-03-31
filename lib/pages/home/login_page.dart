@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flare_flutter/flare_actor.dart';
+// import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list/i10n/localization_intl.dart';
@@ -44,19 +44,20 @@ class LoginPage extends StatelessWidget {
       ),
       body: Stack(
         children: <Widget>[
-          FlareActor(
-            "flrs/login_bg.flr",
-            animation: model.currentAnimation,
-            fit: BoxFit.cover,
-            callback: (animation) {
-              if (animation == "move") {
-                model.currentAnimation = "rotate";
-                model.refresh();
-              } else if (animation == "move_out") {
-                Navigator.of(context).pop();
-              }
-            },
-          ),
+          // TODO: Uncomment the Flare animation when the file is available
+          // FlareActor(
+          //   "flrs/login_bg.flr",
+          //   animation: model.currentAnimation,
+          //   fit: BoxFit.cover,
+          //   callback: (animation) {
+          //     if (animation == "move") {
+          //       model.currentAnimation = "rotate";
+          //       model.refresh();
+          //     } else if (animation == "move_out") {
+          //       Navigator.of(context).pop();
+          //     }
+          //   },
+          // ),
           model.showLoginWidget
               ? LoginWidget(
                   loginPageModel: model,

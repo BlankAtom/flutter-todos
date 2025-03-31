@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:todo_list/json/all_beans.dart';
 import 'package:todo_list/json/task_bean.dart';
 
@@ -157,6 +158,10 @@ class ApiService {
     required Map<String, String> params,
     required CancelToken token,
   }) {
+    // debugPrintStack();
+    debugPrint('检查更新');
+    return;
+
     ApiStrategy.getInstance().post(
       "app/checkUpdate",
       (data) {
@@ -165,7 +170,8 @@ class ApiService {
       },
       params: params,
       errorCallBack: (errorMessage) {
-        error(errorMessage);
+        debugPrintStack();
+        // error(errorMessage);
       },
       token: token,
     );

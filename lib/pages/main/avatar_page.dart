@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:image_crop/image_crop.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list/i10n/localization_intl.dart';
 import 'package:todo_list/model/avatar_page_model.dart';
@@ -8,9 +7,10 @@ import 'package:todo_list/model/main_page_model.dart';
 class AvatarPage extends StatelessWidget {
   late MainPageModel? mainPageModel;
 
-  AvatarPage({required Key key, this.mainPageModel}) : super(key: key) {
+  AvatarPage({required Key key, required this.mainPageModel})
+      : super(key: key) {
     if (this.mainPageModel == null) {
-      this.mainPageModel = MainPageModel();
+      // this.mainPageModel = _globalModel.mainPageModel;
     }
   }
 
@@ -59,12 +59,14 @@ class AvatarPage extends StatelessWidget {
               alignment: Alignment.center,
               child: Container(
                 padding: EdgeInsets.all(20),
-                child: Crop(
-                  key: model.cropKey,
-                  image: model.logic.getAvatarProvider(),
+                child: Image(image: model.logic.getAvatarProvider())
+                /*ImageCropper().cropImage(sourcePath: '')., ImageCropper.platform.cropImage(
+                  // key: model.cropKey,
+                  sourcePath: model.logic.getAvatarProvider(),
                   aspectRatio: 1.0,
                   maximumScale: 1.0,
-                ),
+                )*/
+                ,
               ),
             ),
           ),

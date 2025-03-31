@@ -6,16 +6,17 @@ import 'package:todo_list/model/all_model.dart';
 import 'package:todo_list/pages/all_page.dart';
 
 class ProviderConfig {
-  static ProviderConfig? _instance;
+  static ProviderConfig _instance = ProviderConfig._internal();
 
-  static ProviderConfig getInstance() {
-    if (_instance == null) {
-      _instance = ProviderConfig._internal();
-    }
-    return _instance!;
+  factory ProviderConfig() {
+    return _instance;
   }
 
   ProviderConfig._internal();
+
+  static ProviderConfig getInstance() {
+    return _instance;
+  }
 
   ///全局provider
   ChangeNotifierProvider<GlobalModel> getGlobal(Widget child) {
@@ -27,8 +28,9 @@ class ProviderConfig {
 
   ///主页provider
   ChangeNotifierProvider<MainPageModel> getMainPage() {
+    debugPrint('ChangeNotifierProvider build');
     return ChangeNotifierProvider<MainPageModel>(
-      create: (context) => MainPageModel(),
+      create: (context) => MainPageModel(context: context),
       child: MainPage(),
     );
   }

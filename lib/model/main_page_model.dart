@@ -7,7 +7,7 @@ import 'global_model.dart';
 
 class MainPageModel extends ChangeNotifier {
   late MainPageLogic logic;
-  late BuildContext context;
+  BuildContext? context;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   List<TaskBean> tasks = [];
 
@@ -52,29 +52,34 @@ class MainPageModel extends ChangeNotifier {
   ///用于在mainPage销毁后将GlobalModel中的mainPageModel销毁
   late GlobalModel _globalModel;
 
-  MainPageModel() {
+  MainPageModel({required this.context}) {
+    // debugPrint('MainPage Model build');
     logic = MainPageLogic(this);
+    this.context = context;
+    // setContext(context, globalModel: globalModel)
+  }
+
+  initState() {
+    // logic.initState();
   }
 
   void setContext(BuildContext context, {required GlobalModel globalModel}) {
-    if (this.context == null) {
-      this.context = context;
-      logic.checkUpdate(globalModel);
-      this._globalModel = globalModel;
-      logic.getAvatarType().then((value) {
-        Future.wait(
-          [
-            logic.getTasks(),
-            logic.getCurrentAvatar(),
-            logic.getCurrentUserName(),
-            logic.getCurrentTransparency(),
-            logic.getEnableCardPageOpacity(),
-          ],
-        ).then((value) {
-          refresh();
-        });
+    if (this.context != null) return;
+    this.context = context;
+    this._globalModel = globalModel;
+    logic.getAvatarType().then((value) {
+      Future.wait(
+        [
+          logic.getTasks(),
+          logic.getCurrentAvatar(),
+          logic.getCurrentUserName(),
+          logic.getCurrentTransparency(),
+          logic.getEnableCardPageOpacity(),
+        ],
+      ).then((value) {
+        refresh();
       });
-    }
+    });
   }
 
   @override
@@ -82,7 +87,7 @@ class MainPageModel extends ChangeNotifier {
     super.dispose();
     scaffoldKey?.currentState?.dispose();
     if (!cancelToken.isCancelled) cancelToken.cancel();
-    _globalModel.mainPageModel = MainPageModel();
+    // _globalModel.mainPageModel = null;
     debugPrint("MainPageModel销毁了");
   }
 

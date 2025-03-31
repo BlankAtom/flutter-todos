@@ -57,8 +57,8 @@ class _BottomShowWidgetState extends State<BottomShowWidget>
     final Offset circleOrigin = Offset((size.width - circleSize) / 2, 0);
     final globalModel = Provider.of<GlobalModel>(context);
 
-    return WillPopScope(
-      onWillPop: () {
+    return PopScope(
+      onPopInvokedWithResult: (bool didPop, Object? result) async {
         doExit(context, _controller);
         return Future.value(false);
       },
@@ -67,7 +67,7 @@ class _BottomShowWidgetState extends State<BottomShowWidget>
           doExit(context, _controller);
         },
         child: Scaffold(
-          backgroundColor: Colors.black.withOpacity(0),
+          backgroundColor: Colors.black.withAlpha(255 * 0),
           body: Container(
             width: size.width,
             height: size.height,
@@ -84,7 +84,7 @@ class _BottomShowWidgetState extends State<BottomShowWidget>
                         decoration: BoxDecoration(
                             color: Theme.of(context)
                                 .primaryColorDark
-                                .withOpacity(0.2),
+                                .withAlpha((255 * 0.2).toInt()),
                             shape: BoxShape.circle),
                       ),
                       builder: (ctx, child) {
@@ -106,7 +106,7 @@ class _BottomShowWidgetState extends State<BottomShowWidget>
                       children: List.generate(_children.length, (index) {
                         return IconButton(
                           onPressed: () {
-                            doExit(context, _controller);
+                            // doExit(context, _controller);
                             Navigator.of(context).push(
                               new CupertinoPageRoute(
                                 builder: (ctx) {

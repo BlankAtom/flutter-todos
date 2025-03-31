@@ -106,7 +106,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
 
   void getWeatherNow(GlobalModel globalModel) {
     final position = globalModel.currentPosition;
-    final languageCode = globalModel.currentLocale.languageCode;
+    final languageCode = globalModel.currentLocale?.languageCode;
     ApiService.instance.getWeatherNow(
         success: (WeatherBean weatherBean) {
           globalModel.weatherBean = weatherBean;
@@ -129,7 +129,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
         params: {
           "key": "d381a4276ed349daa3bf63646f12d8ae",
           "location": position,
-          "lang": languageCode
+          "lang": languageCode ?? 'None'
         },
         token: CancelToken());
   }
